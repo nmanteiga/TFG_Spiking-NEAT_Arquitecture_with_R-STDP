@@ -1,6 +1,6 @@
 import gym_super_mario_bros
 from nes_py.wrappers import JoypadSpace
-from gym_super_mario_bros.actions import SIMPLE_MOVEMENT
+from gym_super_mario_bros.actions import COMPLEX_MOVEMENT
 import os
 import neat
 import numpy as np
@@ -10,8 +10,8 @@ import datetime
 
 # this is only so mac does not crash 
 # env = gym_super_mario_bros.make('SuperMarioBros-v0', render_mode='human') # so it renders the machine playing
-env = gym_super_mario_bros.make('SuperMarioBros-v0')
-env = JoypadSpace(env, SIMPLE_MOVEMENT)
+env = gym_super_mario_bros.make('SuperMarioBros-1-1-v0')
+env = JoypadSpace(env, COMPLEX_MOVEMENT)
 
 def preprocess_state(state):
     # grayscale
@@ -45,6 +45,10 @@ def eval_genomes(genomes, config):
             state, reward, terminated, truncated, info = env.step(action)
             done = terminated or truncated
             genome.fitness += reward
+
+            if info['flag_get']:
+                done = True
+                print("Mario hit the flagpole!")
 
             # anti-stuck conditions
             if info['x_pos'] > current_max_x:

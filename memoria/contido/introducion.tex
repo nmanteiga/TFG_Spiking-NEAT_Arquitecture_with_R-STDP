@@ -1,0 +1,46 @@
+\chapter{Introduction}
+
+\section{Motivation}
+Artificial Intelligence (AI) has been one of the most prominent areas of computer science research over the past few decades. With the rise of transformer architectures and the commercialization of General Purpose AI (GPAI), novel algorithms are continuously being deployed across diverse sectors. However, this rapid expansion has exposed a critical flaw: the massive computational and energy resource consumption required to train these models. This unsustainable demand has given rise to initiatives such as Green AI, which advocates for computational efficiency as a primary evaluation criterion alongside model accuracy.
+
+The inefficiency of standard AI can be understood through a simple metaphor: standard artificial neural networks operate like an open tap, where water flows continuously and without interruption. This demands a vast amount of energy. Conversely, biological human brains operate using discrete "spikes" of energy. To adapt the metaphor, the biological approach is akin to opening the tap to a bare minimum, allowing water to slowly accumulate into a single drop that only falls once it reaches a specific mass (the spike).
+
+The main objective of this project is to leverage these principles from neuroscience to develop a more energy efficient AI alternative. By substituting standard continuous networks with Spiking Neural Networks (SNNs) and other principles that will be discussed further on the paper, this project aims to build an efficient Reinforcement Learning agent capable of playing Super Mario Bros, serving as a practical proof of concept for the viability of Green AI in dynamic control environments.
+
+\section{Objectives}
+
+\subsection{Main objective}
+The primary objective of this project is to develop an energy efficient Reinforcement Learning agent capable of navigating the Super Mario Bros environment by substituting standard continuous neural networks with a biologically plausible Spiking Neural Network (SNN).
+
+\subsection{Specific Objectives}
+To achieve the main objective, the project is divided into the following sub-goals:
+\begin{itemize}
+    \item \textbf{Establish a Baseline:} Implement and train a standard NEAT algorithm to play Super Mario Bros to serve as a performance and architectural baseline.
+    \item \textbf{Implement Spiking Mechanics:} Replace standard continuous activation functions (e.g., Sigmoid) with a discrete Leaky Integrate-and-Fire (LIF) neuron model to simulate biological spiking behavior.
+    \item \textbf{Integrate Reinforcement Learning:} Substitute random weight mutation with Reward-Modulated Spike-Timing-Dependent Plasticity (R-STDP) to allow the agent to learn dynamically from environmental rewards (dopamine signals).
+    \item \textbf{Evaluate Efficiency:} Compare the performance and theoretical computational energy consumption of the Spiking-NEAT agent against the standard NEAT baseline.
+\end{itemize}
+
+\section{Methodology}
+To achieve the expected results, the project methodology is conceptually divided into three metaphorical pillars: the architect, the engine, and the teacher.
+
+\textbf{The Architect (Topology):} The foundational structure of the agent's brain is generated using NeuroEvolution of Augmented Topologies (NEAT) \cite{stanley2002}. NEAT improves upon earlier Topology and Weight Evolving Artificial Neural Networks (TWEANNs) by utilizing historical markings (innovation numbers), speciation, and incremental growth from minimal structures. Because NEAT has been validated on complex control tasks like double pole balancing, it serves as the ideal "architect" to dynamically grow the network topology for this project.
+
+\textbf{The Engine (Activation Function):} Standard NEAT typically employs a continuous sigmoidal activation function bounded between $[0, 1]$. However, this continuous processing suffers from the high energy consumption problem acknowledged in the previous section. To resolve this, the network will be transformed into a Spiking Neural Network (SNN) by implementing the Leaky Integrate-and-Fire (LIF) model \cite{gerstner2014}. The LIF model is a mathematical abstraction of biological neurons focusing entirely on the timing of electrical spikes via three mechanics: integrate (accumulating incoming electrical signals), leak (the natural decay of voltage over time), and fire (emitting a binary spike when the voltage surpasses a threshold and resetting). Expanding on the previous water tap metaphor, the LIF model acts as a bucket with a small hole that fills up until the bucket is full and gets emptied (resets) after. The tap represents synaptic current (integrate), the water level represents membrane potential, the hole represents natural leakage (leak), and the overflow when the bucket fills up completely represents the spike (fire). This discrete, binary event-driven approach is a highly efficient way to introduce SNNs into NEAT.
+
+\textbf{The Teacher (Learning Rule):} In standard NEAT, synaptic weights are mutated randomly between generations, which can result in inefficient learning. To address this, the project introduces Reinforcement Spike-Timing-Dependent Plasticity (R-STDP) \cite{mozafari2018} as the "teacher". R-STDP acts as a biologically plausible reinforcement learning mechanism. Rather than randomly guessing weight values, R-STDP analyzes which neurons spiked immediately prior to a successful in-game action and strengthens those specific connections. By mimicking the release of dopamine in a biological brain, the model is directly encouraged to repeat productive behaviors.
+
+\section{Document Structure}
+The remainder of this document is organized into the following chapters, which guide the reader from the theoretical foundations of the project through its technical implementation and final evaluation:
+
+\textbf{Chapter 2: State of the Art} \\
+This chapter establishes the theoretical framework of the project. It reviews the evolution of genetic algorithms, focusing on the NEAT topology, and explores the paradigm shift toward Green AI and Spiking Neural Networks (SNNs). It details the mathematical abstractions of the Leaky Integrate-and-Fire (LIF) model and Reward-Modulated Spike-Timing-Dependent Plasticity (R-STDP), concluding with an analysis of the current research gap.
+
+\textbf{Chapter 3: Design and Implementation} \\
+This chapter details the technical development of the Reinforcement Learning agent. It outlines the integration of the Super Mario Bros emulation environment, the vision preprocessing system, and the architecture of the standard NEAT baseline. Furthermore, it explains the structural modifications required to replace continuous activation functions with discrete LIF neurons and implement the R-STDP learning rule.
+
+\textbf{Chapter 4: Experiments and Results} \\
+This chapter presents the data gathered during the training and evaluation phases. It compares the evolutionary progress, generational fitness scores, and learning plateaus of the standard NEAT baseline against the Spiking-NEAT agent. Additionally, it analyzes the theoretical computational energy efficiency of both models to validate the Green AI objectives.
+
+\textbf{Chapter 5: Conclusions and Future Work} \\
+The final chapter evaluates the overall success of the project against the objectives established in the introduction. It summarizes the key findings regarding the viability of SNNs in dynamic control environments and proposes future lines of research and potential improvements for the agent.
