@@ -12,7 +12,7 @@
 \def\nomedirectorA{Outro Nome Completo}              % substitúe aquí o nome de quen dirixe
 %\def\nomedirectorB{Outro Nome Completo}             % duplica esta liña máis veces se o precisas, cambiando
                                                      % a letra final (A, B, C, D...): úsanse na portada.tex
-\def\titulo{Título completo do traballo fin de grao} % substitúe aquí o título do teu TFG
+\def\titulo{Lifelong Adaptation in Minimal Structures: A Spiking-NEAT Architecture with R-STDP} % substitúe aquí o título do teu TFG
 %\def\titulacion{gced}                               % descomenta esta liña e comenta a seguinte se es estudante do GCED
 \def\titulacion{gei}
 
@@ -46,6 +46,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{document}
+\nocite{stanley2002,gerstner2014,qiu2018evolving,mozafari2018,schwartz2020green,sethbling2015mario,techwithtim2019flappy}
 
  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
  % Preliminares do documento            %
@@ -53,9 +54,10 @@
 
  \include{portada/portada}
  \dedicatoria{Dedicatoria} % escribe neste comando o teu texto de dedicatoria
+ I would like to thank ...
  \paxinaenbranco
  \begin{agradecementos}
- \blindtext                % substitúe este comando polo teu texto de agradecementos
+ I would like to thank ...
  \end{agradecementos}
  \include{portada/resumo}
 
@@ -76,18 +78,19 @@
  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
  \include{contido/introducion}
- \include{contido/demo}
-%\include{contido/...}
+ \include{contido/estado_arte}
+ %\include{contido/design}
+ %\include{contido/experiment}
  \include{contido/conclusions}
 
  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
  % Apéndices, glosarios e bibliografía  %
  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
- \appendix
- \appendixpage
- \include{anexos/adicional}
-%\include{anexos/...}
+% \appendix
+% \appendixpage
+% \include{anexos/adicional}
+% \include{anexos/...}
 
  \printglossary[type=\acronymtype,title=\nomeglosarioacronimos]
  \printglossary[title=\nomeglosariotermos]

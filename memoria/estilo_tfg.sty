@@ -193,7 +193,11 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \DTMsavenow{lastcompilationdate}
-\def\datasimple{\DTMmonthname{\DTMfetchmonth{lastcompilationdate}} de \DTMfetchyear{lastcompilationdate}}
+\ifthenelse{\equal{\lingua}{eng}}{%
+  \def\datasimple{\DTMmonthname{\DTMfetchmonth{lastcompilationdate}} \DTMfetchyear{lastcompilationdate}}
+}{%
+  \def\datasimple{\DTMmonthname{\DTMfetchmonth{lastcompilationdate}} de \DTMfetchyear{lastcompilationdate}}
+}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % opcións listings                     %

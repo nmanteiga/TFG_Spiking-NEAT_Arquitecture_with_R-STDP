@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999998 (TeX Live 2026) (preloaded format=xelatex 2026.9.7)  7 SEP 2026 10:19
+This is XeTeX, Version 3.141592653-2.6-0.999998 (TeX Live 2026) (preloaded format=xelatex 2026.9.7)  10 SEP 2026 10:50
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1651,14 +1651,16 @@ Package: glossary-tree 2026/03/06 v5.0 (NLCT)
 \openout4 = `memoria_tfg.glo'.
 
 Package glossaries Info: Writing glossary file memoria_tfg.glo on input line 23
-0.
+4.
 \glo@acronym@file=\write5
 \openout5 = `memoria_tfg.acn'.
 
 Package glossaries Info: Writing glossary file memoria_tfg.acn on input line 23
-0.
+4.
  (./bibliografia/acronimos.tex) (./bibliografia/glosario.tex))
-(./memoria_tfg.aux)
+(./memoria_tfg.aux (./portada/portada.aux) (./portada/resumo.aux)
+(./contido/introducion.aux) (./contido/estado_arte.aux)
+(./contido/conclusions.aux))
 \openout1 = `memoria_tfg.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 48.
@@ -1794,16 +1796,14 @@ Package: ltcaption 2021/01/08 v1.4c longtable captions (AR)
 Package caption Info: supertabular package is loaded.
 Package caption Info: End \AtBeginDocument code.
 Package hyperref Info: Link coloring ON on input line 48.
+
+(./memoria_tfg.out) (./memoria_tfg.out)
 \@outlinefile=\write6
 \openout6 = `memoria_tfg.out'.
 
-
-
-Package hyperref Warning: Rerun to get /PageLabels entry.
-
 \openout2 = `portada/portada.aux'.
 
-(./portada/portada.tex
+ (./portada/portada.tex
 LaTeX Font Info:    Trying to load font information for T1+phv on input line 4.
 
 
@@ -1855,13 +1855,13 @@ LaTeX Font Info:    Font shape `TU/LinLibertine(0)/b/n' will be
 
 ])
 LaTeX Font Info:    Font shape `TU/LinLibertine(0)/m/it' will be
-(Font)              scaled to size 10.95pt on input line 55.
+(Font)              scaled to size 10.95pt on input line 56.
  [1
 
 
 ]
 LaTeX Font Info:    Font shape `TU/LinLibertine(0)/b/n' will be
-(Font)              scaled to size 10.95pt on input line 57.
+(Font)              scaled to size 10.95pt on input line 59.
 
 [2
 
@@ -1883,27 +1883,25 @@ Underfull \hbox (badness 10000) in paragraph at lines 10--11
 
 ])
 LaTeX Font Info:    Font shape `TU/LinLibertine(0)/b/n' will be
-(Font)              scaled to size 24.88pt on input line 66.
-
-No file memoria_tfg.toc.
+(Font)              scaled to size 24.88pt on input line 68.
+ (./memoria_tfg.toc)
 \tf@toc=\write7
 \openout7 = `memoria_tfg.toc'.
 
-[1
+ [1
 
 
 
-]
-No file memoria_tfg.lof.
+] (./memoria_tfg.lof)
 \tf@lof=\write8
 \openout8 = `memoria_tfg.lof'.
 
-[2
+ [2
 
-]
-No file memoria_tfg.lot.
+] (./memoria_tfg.lot)
 \tf@lot=\write9
 \openout9 = `memoria_tfg.lot'.
+
 
 [3
 
@@ -1926,14 +1924,6 @@ Overfull \hbox (7.42593pt too wide) in paragraph at lines 20--21
 ine(0)/m/n/10.95 Substitute random weight mutation with Reward-
  []
 
-
-Package natbib Warning: Citation `stanley2002' on page 2 undefined on input lin
-e 27.
-
-
-Package natbib Warning: Citation `gerstner2014' on page 2 undefined on input li
-ne 29.
-
 LaTeX Font Info:    Font shape `TU/LinLibertine(0)/m/n' will be
 (Font)              scaled to size 10.0pt on input line 30.
 LaTeX Font Info:    Font shape `TU/LinLibertine(0)/m/sl' in size <10> not avail
@@ -1942,161 +1932,55 @@ able
  line 30.
 LaTeX Font Info:    Font shape `TU/LinLibertine(0)/m/it' will be
 (Font)              scaled to size 10.0pt on input line 30.
-[2]
+[2] [3]) [4]
+\openout2 = `contido/estado_arte.aux'.
 
-Package natbib Warning: Citation `mozafari2018' on page 3 undefined on input li
-ne 31.
-
-[3]) [4]
-\openout2 = `contido/demo.aux'.
-
- (./contido/demo.tex
+ (./contido/estado_arte.tex
 Chapter 2.
-LaTeX Font Info:    Font shape `TU/LinLibertine(0)/m/sc' will be
-(Font)              scaled to size 10.95pt on input line 4.
-LaTeX Font Info:    Font shape `TU/LinLibertine(0)/m/n' will be
-(Font)              scaled to size 21.55566pt on input line 4.
-LaTeX Font Info:    Font shape `TU/LinLibertine(0)/m/n' will be
-(Font)              scaled to size 33.01007pt on input line 4.
-Package lettrine.sty Info: Targeted height = 21.55566pt
-(lettrine.sty)             (for loversize=0, accent excluded),
-(lettrine.sty)             Lettrine height = 21.42354pt (E);
-(lettrine.sty)             reported on input line 4.
-LaTeX Font Info:    Font shape `TU/LinLibertine(0)/m/n' will be
-(Font)              scaled to size 9.0pt on input line 10.
-LaTeX Font Info:    Font shape `TU/LinLibertine(0)/m/n' will be
-(Font)              scaled to size 5.0pt on input line 10.
-
-LaTeX Warning: Hyper reference `bhfn:1' on page 5 undefined on input line 10.
-
-
-LaTeX Warning: Reference `fig:exemplo' on page 5 undefined on input line 15.
-
-
-LaTeX Warning: Reference `fig:exemplo' on page 5 undefined on input line 15.
-
-File: imaxes/udc.png Graphic file (type bmp)
-<imaxes/udc.png>
-LaTeX Font Info:    Font shape `TU/LinLibertine(5)/m/n' will be
-(Font)              scaled to size 10.95pt on input line 29.
-
-LaTeX Warning: Reference `fig:exemplo-subfiguras' on page 5 undefined on input 
-line 35.
-
-
-LaTeX Warning: Reference `fig:subfigura-rotada' on page 5 undefined on input li
-ne 36.
-
-
-LaTeX Warning: Reference `fig:subfigura-deformada' on page 5 undefined on input
- line 37.
-
-File: imaxes/udc.png Graphic file (type bmp)
-<imaxes/udc.png>
-File: imaxes/udc.png Graphic file (type bmp)
-<imaxes/udc.png>
-
-LaTeX Warning: Reference `tab:exemplo' on page 5 undefined on input line 62.
-
-
-LaTeX Warning: Reference `tab:exemplo' on page 5 undefined on input line 62.
-
 [5
 
 
 
 
-]
+] [6]
+Overfull \hbox (0.19164pt too wide) in paragraph at lines 27--28
+\TU/LinLibertine(0)/m/n/10.95 differentiable implementation cannot be trained u
+sing standard continuous mathematics, such
+ []
 
-LaTeX Warning: Reference `tab:longa' on page 6 undefined on input line 85.
-
-(./contido/taboa-longa.tex
-ignored: Infinite glue shrinkage found in box being split [6]
-ignored: I
-nfinite glue shrinkage found in box being split [7])
-(/usr/local/texlive/2026/texmf-dist/tex/latex/listings/lstlang1.sty
-File: lstlang1.sty 2025/11/14 1.11b listings language file
-)
-(/usr/local/texlive/2026/texmf-dist/tex/latex/listings/lstmisc.sty
-File: lstmisc.sty 2025/11/14 1.11b (Carsten Heinz)
-)
-LaTeX Font Info:    Font shape `TU/LinLibertine(5)/m/n' will be
-(Font)              scaled to size 9.0pt on input line 96.
- [8])
-[9] [10]
+[7] [8]) [9] [10]
 \openout2 = `contido/conclusions.aux'.
 
  (./contido/conclusions.tex
 Chapter 3.
-Package lettrine.sty Info: Targeted height = 21.55566pt
-(lettrine.sty)             (for loversize=0, accent excluded),
-(lettrine.sty)             Lettrine height = 21.35751pt (D);
-(lettrine.sty)             reported on input line 4.
 ) [11
 
 
 
 
-] [12]
-LaTeX Font Info:    Font shape `TU/LinLibertine(0)/m/n' will be
-(Font)              scaled to size 24.88pt on input line 88.
- [13
+] (./memoria_tfg.acr) (./memoria_tfg.gls) (./memoria_tfg.bbl [12
 
 
+])
+[13
 
-]
-\openout2 = `anexos/adicional.aux'.
-
- (./anexos/adicional.tex
-Appendix A.
-Package lettrine.sty Info: Targeted height = 21.55566pt
-(lettrine.sty)             (for loversize=0, accent excluded),
-(lettrine.sty)             Lettrine height = 21.42354pt (E);
-(lettrine.sty)             reported on input line 4.
-) [14
-
-
-] [15]
-No file memoria_tfg.acr.
-No file memoria_tfg.gls.
-No file memoria_tfg.bbl.
-[16
-
-
-]
-
-Package natbib Warning: There were undefined citations.
-
-(./memoria_tfg.aux (./portada/portada.aux) (./portada/resumo.aux)
-(./contido/introducion.aux) (./contido/demo.aux) (./contido/conclusions.aux)
-(./anexos/adicional.aux))
+] (./memoria_tfg.aux (./portada/portada.aux) (./portada/resumo.aux)
+(./contido/introducion.aux) (./contido/estado_arte.aux)
+(./contido/conclusions.aux))
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
  ***********
-
-
-LaTeX Warning: There were undefined references.
-
-
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
-
-
-Package rerunfilecheck Warning: File `memoria_tfg.out' has changed.
-(rerunfilecheck)                Rerun to get outlines right
-(rerunfilecheck)                or use package `bookmark'.
-
-Package rerunfilecheck Info: Checksums for `memoria_tfg.out':
-(rerunfilecheck)             Before: <no file>
-(rerunfilecheck)             After:  E1DEBA679F3B2DBFD7408554CFB65D52;1677.
+Package rerunfilecheck Info: File `memoria_tfg.out' has not changed.
+(rerunfilecheck)             Checksum: 3CF3C30348CDB88C3981C1376EE797FE;1061.
  ) 
 Here is how much of TeX's memory you used:
- 37585 strings out of 468168
- 788932 string characters out of 5432816
- 1470183 words of memory out of 5000000
- 65770 multiletter control sequences out of 15000+600000
- 640188 words of font info for 136 fonts, out of 8000000 for 9000
+ 37426 strings out of 468168
+ 786084 string characters out of 5432816
+ 1287454 words of memory out of 5000000
+ 65613 multiletter control sequences out of 15000+600000
+ 637380 words of font info for 117 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
- 102i,12n,145p,2495b,1235s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 102i,12n,145p,2495b,452s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on memoria_tfg.pdf (23 pages).
+Output written on memoria_tfg.pdf (20 pages).

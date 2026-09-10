@@ -8,11 +8,10 @@
 \contentsline {subsection}{\numberline {1.2.2}Specific Objectives}{2}{subsection.1.2.2}%
 \contentsline {section}{\numberline {1.3}Methodology}{2}{section.1.3}%
 \contentsline {section}{\numberline {1.4}Document Structure}{3}{section.1.4}%
-\contentsline {chapter}{\numberline {2}Contido demostrativo}{5}{chapter.2}%
-\contentsline {section}{\numberline {2.1}Inclusión de imaxes}{5}{section.2.1}%
-\contentsline {subsection}{\numberline {2.1.1}Inclusión de varias sub-imaxes}{5}{subsection.2.1.1}%
-\contentsline {section}{\numberline {2.2}Inclusión de táboas}{6}{section.2.2}%
-\contentsline {section}{\numberline {2.3}Inclusión de código fonte}{8}{section.2.3}%
-\contentsline {section}{\numberline {2.4}Uso da relación de acrónimos e do glosario}{9}{section.2.4}%
+\contentsline {chapter}{\numberline {2}State of the Art}{5}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Neuroevolution and Genetic Algorithms}{5}{section.2.1}%
+\contentsline {section}{\numberline {2.2}Spiking Neural Networks (SNN) and Green AI}{6}{section.2.2}%
+\contentsline {section}{\numberline {2.3}Synaptic Plasticity and Biological Reinforcement Learning}{7}{section.2.3}%
+\contentsline {section}{\numberline {2.4}Comparative Analysis and Gap Identification}{9}{section.2.4}%
 \contentsline {chapter}{\numberline {3}Conclusións}{11}{chapter.3}%
-\contentsline {chapter}{\numberline {A}Material adicional}{14}{appendix.A}%
+\contentsline {chapter}{Bibliography}{13}{chapter*.4}%
