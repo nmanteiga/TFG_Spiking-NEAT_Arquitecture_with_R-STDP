@@ -19,9 +19,9 @@ bias_init_stdev         = 1.0
 bias_init_type          = gaussian
 bias_max_value          = 30.0
 bias_min_value          = -30.0
-bias_mutate_power       = 0.5
-bias_mutate_rate        = 0.7
-bias_replace_rate       = 0.1
+bias_mutate_rate        = 0.0
+bias_replace_rate       = 0.0
+bias_mutate_power       = 0.0
 
 compatibility_disjoint_coefficient = 1.0
 compatibility_weight_coefficient   = 0.5
