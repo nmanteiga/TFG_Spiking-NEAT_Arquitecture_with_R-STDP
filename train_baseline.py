@@ -78,6 +78,8 @@ def eval_genomes(genomes, config):
         genome.energy_pj = genome.macs * 4.6  # 4.6 pJ per MAC
         total_training_energy_pj += genome.energy_pj
 
+        # code carbon !!
+
     best = max(genomes, key=lambda x: x[1].fitness)[1]
     print(f"Gen Best -> Fitness: {best.fitness:.1f} | Frames: {best.frames} | Best Run Energy: {best.energy_pj:.2f} pJ | Total Training Energy So Far: {total_training_energy_pj / 1e6:.2f} µJ")  
 

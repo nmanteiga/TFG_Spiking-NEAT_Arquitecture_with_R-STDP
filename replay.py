@@ -10,8 +10,8 @@ import random
 
 # config
 SEED_TO_REPLAY = 202
-IS_SPIKING = False  # True if replaying a SNN
-TIMESTAMP_FOLDER = "2026-09-19_11-03-41" # folder name here
+IS_SPIKING = True  # True if replaying a SNN
+TIMESTAMP_FOLDER = "2026-09-19_11-03-24" # folder name here
 
 '''
 ssn
@@ -36,7 +36,7 @@ random.seed(SEED_TO_REPLAY)
 np.random.seed(SEED_TO_REPLAY)
 
 # rgb_array to prevent macos window frame drops
-env = gym_super_mario_bros.make('SuperMarioBros-1-1-v0', render_mode='rgb_array')
+env = gym_super_mario_bros.make('SuperMarioBros-1-2-v0', render_mode='rgb_array')
 env = JoypadSpace(env, COMPLEX_MOVEMENT)
 
 def preprocess_state(state):

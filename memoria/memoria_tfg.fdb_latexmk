@@ -1,5 +1,5 @@
 # Fdb version 4
-["pdflatex"] 1790243171.41736 "/Users/bazuka/Desktop/TFG/code/memoria/memoria_tfg.tex" "memoria_tfg.pdf" "memoria_tfg" 1790243171.63312 2
+["pdflatex"] 1790585533.4783 "/Users/bazuka/Desktop/TFG/code/memoria/memoria_tfg.tex" "memoria_tfg.pdf" "memoria_tfg" 1790585533.68773 2
   "/Users/bazuka/Desktop/TFG/code/memoria/memoria_tfg.tex" 1789029188.21952 4483 4ad4c4f2330aef85ad04fc71236d040c ""
   "/usr/local/texlive/2026/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/local/texlive/2026/texmf-dist/fonts/tfm/public/cm/cmr10.tfm" 1136768653 1296 45809c5a464d5f32c8f98ba97c1bb47f ""
@@ -30,7 +30,7 @@
   "/usr/local/texlive/2026/texmf-var/web2c/pdftex/pdflatex.fmt" 1788768820 3636779 0a3961c28a3e89a2b44b2bd8ca3ab9b9 ""
   "/usr/local/texlive/2026/texmf.cnf" 1774209515 577 648cd9f92f9c0eac486f4c71c85cfbbe ""
   "estilo_tfg.sty" 1789029452.0981 8948 5c661a8665340957a778599533d25b54 ""
-  "memoria_tfg.aux" 1790243163.41688 32 3985256e7290058c681f74d7a3565a19 "pdflatex"
+  "memoria_tfg.aux" 1790585525.47782 32 3985256e7290058c681f74d7a3565a19 "pdflatex"
   "memoria_tfg.tex" 1789029188.21952 4483 4ad4c4f2330aef85ad04fc71236d040c ""
   (generated)
   "memoria_tfg.aux"
