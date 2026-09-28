@@ -1,16 +1,95 @@
 \chapter{State of the Art}
 
+This chapter establishes the theoretical and mathematical foundations required to contextualize the contributions of this document. It provides a critical review of the current literature surrounding neuroevolutionary algorithms, Spiking Neural Networks (SNNs), and biologically plausible learning rules. By analyzing recent advancements and their inherent limitations, this section constructs the conceptual framework necessary to justify the proposed Spiking-NEAT architecture and its application in dynamic control environments.
 
 
 \section{Neuroevolution and Genetic Algorithms}
 
-Genetic Algorithms (GAs) are search heuristics inspired by Darwinian evolution, utilizing mechanics such as population dynamics, fitness evaluation, crossover, and mutation. Neuroevolution (NE) is the specific application of GAs to Artificial Neural Networks (ANNs). It focuses on mimicking the evolution of a biological brain by optimizing either the synaptic weights or the overall network architecture to achieve a desired outcome.
+Historically, the standard method for training Artificial Neural Networks (ANNs) is the backpropagation algorithm[cite: 8]. The fundamental purpose of backpropagation is to optimize a network's predictions through supervised learning by systematically adjusting its internal weights and biases to minimize a mathematical error[cite: 8].
 
-Historically, a prominent approach in this field has been Topology and Weight Evolving Artificial Neural Networks (TWEANNs), which simultaneously evolve the structure and the connections of a network. However, traditional TWEANNs suffered from three critical limitations. First, they struggled heavily with the \textit{Competing Conventions} problem (also known as the permutation problem). This occurs when two parent networks compute the same logical solution but possess different internal topological orderings, crossing them over often produces dysfunctional offspring with scrambled or missing features. Second, early TWEANNs lacked a mechanism to preserve topological innovations. Without dividing the population into different species, newly mutated (and temporarily weaker) structures were quickly driven to extinction by older, highly optimized, but structurally simpler genomes. Lastly, to ensure genetic diversity, early models frequently initialized populations with complex, randomized topologies. This bloated the genomes with unjustified connections and unnecessarily expanded the search space.
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.85\textwidth]{imaxes/backpropagation.png}
+    \caption{Architecture of a feedforward neural network illustrating the forward pass of activations and the backward propagation of error adjustments for weight optimization. Adapted from GeeksforGeeks.}
+    \label{fig:backpropagation}
+\end{figure}
 
-The NeuroEvolution of Augmented Topologies (NEAT) algorithm \cite{stanley2002} introduces three core innovations to systematically resolve these issues: historical markings, speciation, and minimal initial structures. By assigning a global innovation number (an ID) to every new structural mutation, NEAT can perfectly align and cross over genomes of different sizes without requiring complex topological analysis, effectively eliminating the Competing Conventions problem. Furthermore, NEAT employs speciation (or niching) to group structurally similar networks together. This protects new, innovative topologies, giving them time to optimize their weights before they must compete with the entire population. Finally, NEAT addresses the initialization problem by starting the population with zero hidden nodes. Complexity is added incrementally only when it provides a distinct functional benefit, ensuring the final network remains as compact as possible and drastically reducing the dimensionality of the search space.
+As illustrated in Figure~\ref{fig:backpropagation}, this training process operates in three distinct phases[cite: 8]:
 
-Through extensive ablation studies and benchmark testing on complex control tasks---such as the XOR problem and double pole balancing---NEAT has consistently demonstrated superior performance over traditional NE methods. Its adaptability has also been proven in dynamic video game environments, notably in \textit{Super Mario Bros.} \cite{sethbling2015mario}, which serves as the foundational inspiration for the baseline environment in this project. Despite its structural efficiency, however, standard NEAT possesses one major limitation: it relies on continuous mathematical activation functions (e.g., Sigmoid). These continuous floating-point operations are computationally expensive, making standard NEAT unsuitable for edge-computing scenarios where extreme energy efficiency is mandatory, such as robotics or aerospace applications. This computational bottleneck necessitates the transition toward Spiking Neural Networks.
+\begin{enumerate}
+    \item \textbf{The Forward Pass:} Input data propagates forward through the network's interconnected hidden layers[cite: 8]. Each node extracts features and applies continuous mathematical transformations until the final layer outputs a prediction[cite: 8].
+    \item \textbf{Error Calculation:} A predefined loss function evaluates this output, measuring the mathematical discrepancy (the error) between the network's prediction and the actual ``ground truth'' provided by the training dataset[cite: 8].
+    \item \textbf{The Backward Pass:} The algorithm calculates the gradient of the loss function[cite: 8]. It then moves backward through the network, effectively distributing the ``blame'' for the error by calculating exactly how much each individual weight and bias needs to be adjusted to improve the next prediction[cite: 8].
+\end{enumerate}
+
+While this gradient descent method is incredibly powerful for supervised tasks like image classification, it possesses two strict requirements: it relies on massive datasets of ``correct answers'' to calculate the initial loss, and it requires continuous, differentiable activation functions to calculate the gradients[cite: 8].
+
+However, in dynamic control environments (such as autonomous robotics or video games like Super Mario Bros) there is no dataset of ``perfect moves'' to learn from[cite: 8]. The AI only knows whether it survived or failed based on sparse environmental rewards[cite: 8]. Because standard gradient-based backpropagation struggles in these unpredictable, data-poor scenarios, researchers turned to biology for a solution, giving rise to Neuroevolution (NE)[cite: 8].
+
+Neuroevolution is a prominent subfield of Artificial Intelligence that applies the principles of Darwinian natural selection to neural networks. Instead of training a single network with a dataset, Neuroevolution relies on Genetic Algorithms (GAs) to generate a "population" of many different candidate networks. The algorithm evaluates each network based on its performance in the environment (its fitness). The weakest networks are discarded, while the most successful ones are selected to produce a new generation through biological mechanics like crossover (combining traits from two parents) and mutation (random structural changes).
+
+\subsubsection{TWEANNs}
+
+Historically, early neuroevolutionary systems focused exclusively on optimizing the synaptic weights of a neural network, while its structural topology remained fixed by a human engineer. However, guessing the optimal architecture for a complex, dynamic environment is incredibly difficult. To overcome this, researchers developed Topology and Weight Evolving Artificial Neural Networks (TWEANNs) \cite{stanley2002}, algorithms designed to evolve both the connection weights and the physical structure of the network simultaneously.
+
+While TWEANNs represented a significant conceptual leap, their practical application was severely hindered by three critical limitations:
+
+\begin{enumerate}
+    \item \textbf{The Competing Conventions (Permutation) Problem:} This is the most severe flaw in early neuroevolution. It occurs when two parent networks learn to solve the same problem, but encode their solutions using different internal topological orderings. If a genetic algorithm attempts to cross over (breed) these two parents, the resulting offspring will often suffer from missing or duplicated features. Because the algorithm has no way to align the mismatched hidden nodes, crossing over two highly successful parents frequently produces damaged offspring.
+\end{enumerate}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.85\textwidth]{imaxes/tweanns1.png}
+    \caption{The competing conventions problem. The two networks compute the same exact function even though their hidden units appear in a different order and are represented by different chromosomes, making them incompatible for crossover. The figure shows that the two single-point recombinations are both missing one of the 3 main components of each solution. The depicted networks are only 2 of the 6 possible permutations of hidden unit orderings. Adapted from \cite{stanley2002}.}
+    \label{fig:competing_conventions}
+\end{figure}
+
+As illustrated in Figure~\ref{fig:competing_conventions}, crossing over two functional networks with different internal orderings results in offspring missing crucial information (e.g., missing node C or node A).
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.9\textwidth]{imaxes/tweanns2.png}
+    \caption{Matching up genomes for different network topologies using innovation numbers. Although Parent 1 and Parent 2 look different, their innovation numbers (shown at the top of each gene) tell us which genes match up with which. Even without any topological analysis, a new structure that combines the overlapping parts of the two parents as well as their different parts can be created. Matching genes are inherited randomly, whereas disjoint genes (those that do not match in the middle) and excess genes (those that do not match in the end) are inherited from the more fit parent. In this case, equal fitnesses are assumed, so the disjoint and excess genes are also inherited randomly. The disabled genes may become enabled again in future generations: there is a preset chance that an inherited gene is disabled if it is disabled in either parent. Adapted from \cite{stanley2002}.}
+    \label{fig:innovation_numbers}
+\end{figure}
+
+\begin{enumerate}
+    \setcounter{enumi}{1} % fuerza a que la lista empiece en el número 2
+    \item \textbf{Unprotected Innovation:} In evolutionary algorithms, a newly mutated structure (like a new hidden node) often causes a temporary drop in performance before its weights can be optimized. Early TWEANNs evaluated all networks in a single, unified pool. Consequently, new and complex topological innovations were immediately driven to extinction by older, structurally simpler networks that had already optimized their weights. Also, having the global population all together can cause the initially ``stronger'' genes to prevail and drive other species of the global population to extinction; this is a hazard for innovation.
+    
+    \item \textbf{Topological Bloat:} To ensure genetic diversity, early models frequently initialized populations with complex, highly randomized topologies. This bloated the genomes with unjustified connections from the very first generation, unnecessarily expanding the mathematical search space and wasting computational resources.
+\end{enumerate}
+
+These three structural flaws meant that TWEANNs struggled to scale to high-dimensional tasks. The field required a paradigm shift to make neuroevolution mathematically efficient and viable for complex control environments, a shift that was realized by the introduction of the NEAT algorithm.
+
+
+\subsubsection{NeuroEvolution of Augmented Topologies (NEAT)}
+
+NeuroEvolution of Augmented Topologies (NEAT) is the most efficient solution for the problems that TWEANNs presented in the past, giving a practical solution for each problem: 
+
+\begin{quote}
+``We claim that the increased efficiency is due to (1) employing a principled method of crossover of different topologies, (2) protecting structural innovation using speciation, and (3) incrementally growing from minimal structure.'' \cite{stanley2002}
+\end{quote}
+
+\begin{enumerate}
+    \item \textbf{Historical Markings and Crossover:} NEAT is based on the premise that genomes can have different sizes and structures (mimicking gene amplification in biology), which makes crossover a hard task due to variable-length genomes. This is why direct genetic encoding and innovation numbers are used to approximate the homology of two genes. Basically, crossover happens when two genes have compatible historical markings (innovation numbers, which are IDs for the markings). Using artificial synapsis allows the genes to add new structures without losing track of which gene is which; this keeps crossover orderly and allows the right genes to mate, solving the Competing Conventions problem.
+    
+    \item \textbf{Speciation:} NEAT uses speciation (or niching) to divide the population into distinct species based on topological similarity. This is necessary since having the global population all together can cause the initially ``stronger'' genes to prevail and drive other species of the global population to extinction, which is a hazard for innovation. Using explicit fitness sharing, speciating is possible since it forces individuals with similar genomes to share their fitness payoff (using fitness peaks), protecting initially ``weaker'' species from becoming extinct and protecting innovation in their own species.
+    
+    \item \textbf{Minimal Initial Structures:} The challenge observed in TWEANNs with the initial population is the initial topological complexity. Early TWEANNs started with random complex topologies to ensure diversity, which bloated the genomes with unjustified connections and expanded the search space. NEAT solves this by starting with a completely minimal population (no hidden nodes) and letting complexity emerge incrementally only when it provides a functional benefit. This minimizes the dimensionality of the search space, drastically boosting performance.
+\end{enumerate}
+
+In general, using these three key points, NEAT not only solves the initial problems of TWEANNs but also serves as a great contribution for GAs:
+
+\begin{quote}
+``NEAT is also an important contribution to GAs because it shows how it is possible for evolution to both optimize and complexify solutions simultaneously, offering the possibility of evolving increasingly complex solutions over generations, and strengthening the analogy with biological evolution.'' \cite{stanley2002}
+\end{quote}
+
+Moreover, as will be discussed in the following sections, it has also passed thorough testing and ablations.
+
+\paragraph{Innovation Numbers}
+...
 
 
 

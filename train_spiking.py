@@ -15,7 +15,6 @@ import random
 from models.spiking_network import SpikingNetwork  
 
 
-
 # this is only so mac does not crash 
 # env = gym_super_mario_bros.make('SuperMarioBros-v0', render_mode='human') # so it renders the machine playing
 env = gym_super_mario_bros.make('SuperMarioBros-1-1-v0')
@@ -87,22 +86,8 @@ def eval_genomes(genomes, config):
     best = max(genomes, key=lambda x: x[1].fitness)[1]
     print(f"Gen Best -> Fitness: {best.fitness:.1f} | Best Run Energy: {best.energy_pj:.2f} pJ | Total Training Energy So Far: {total_training_energy_pj / 1e6:.2f} µJ")
 
-    '''
-        # energy efficiency meassurements
-        genome.frames = frame_counter
-        genome.synops = net.synaptic_operations
-        genome.spikes = net.total_spikes
-        genome.energy_pj = net.synaptic_operations * 0.9
 
-    # energy efficiency logs   
-    best = max(genomes, key=lambda x: x[1].fitness)[1]
-    print(f"Gen Best -> Fitness: {best.fitness:.1f} | Spikes: {best.spikes} | SynOps: {best.synops} | Energy: {best.energy_pj:.2f} pJ")
-    '''
-
-
-
-
-def run(config_path):
+def run(config_path, seed_value):
     config = neat.config.Config(neat.DefaultGenome, neat.DefaultReproduction, 
                                 neat.DefaultSpeciesSet, neat.DefaultStagnation, 
                                 config_path)
@@ -110,7 +95,7 @@ def run(config_path):
 
     # to save the results on logs
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    log_dir = os.path.join(local_dir, "logs", timestamp)
+    log_dir = os.path.join(local_dir, "logs", f"seed_{seed_value}_{timestamp}")
     os.makedirs(log_dir, exist_ok=True)
 
     with open(os.path.join(log_dir, ".keep"), "w") as f:
@@ -151,4 +136,4 @@ if __name__ == "__main__":
     print(f"--- STARTING RUN WITH RANDOM SEED: {seed_value} ---")
     
     config_path = os.path.join(local_dir, "config-spiking.txt") 
-    run(config_path)
+    run(config_path, seed_value)

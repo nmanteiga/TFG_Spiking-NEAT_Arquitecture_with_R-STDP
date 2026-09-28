@@ -43,22 +43,22 @@ H.~Qiu, M.~Garratt, D.~Howard, and S.~Anavatti, ``Evolving spiking neural
   Nowzari-Dalini, and Ganjtabesh]{mozafari2018}
 M.~Mozafari, S.~R. Kheradpisheh, T.~Masquelier, A.~Nowzari-Dalini, and
   M.~Ganjtabesh, ``First-spike-based visual categorization using
-  reward-modulated stdp,'' \emph{IEEE Transactions on Neural Networks and
+  reward-modulated {STDP},'' \emph{IEEE Transactions on Neural Networks and
   Learning Systems}, vol.~29, no.~12, pp. 6178--6190, 2018.
 
 \bibitem[Schwartz et~al.(2020)Schwartz, Dodge, Smith, and
   Etzioni]{schwartz2020green}
-R.~Schwartz, J.~Dodge, N.~A. Smith, and O.~Etzioni, ``Green ai,''
+R.~Schwartz, J.~Dodge, N.~A. Smith, and O.~Etzioni, ``Green {AI},''
   \emph{Communications of the ACM}, vol.~63, no.~12, pp. 54--63, 2020.
 
 \bibitem[SethBling(2015)]{sethbling2015mario}
-SethBling, ``Mari/o - machine learning for video games,''
+SethBling, ``{MarI/O} - machine learning for video games,''
   \url{https://www.youtube.com/watch?v=qv6UVOQ0F44}, 2015, accessed:
   2026-09-08.
 
 \bibitem[TechWithTim(2019)]{techwithtim2019flappy}
-TechWithTim, ``Neat-flappy-bird: A neuroevolution implementation of the classic
-  flappy bird game using the neat algorithm,''
+TechWithTim, ``{NEAT}-flappy-bird: A neuroevolution implementation of the
+  classic flappy bird game using the {NEAT} algorithm,''
   \url{https://github.com/techwithtim/NEAT-Flappy-Bird}, 2019, gitHub
   Repository. Accessed: 2026-09-08.
 

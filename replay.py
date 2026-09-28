@@ -10,8 +10,25 @@ import random
 
 # config
 SEED_TO_REPLAY = 202
-IS_SPIKING = True  # True if replaying a SNN
-TIMESTAMP_FOLDER = "2026-09-19_11-03-24" # folder name here
+IS_SPIKING = False  # True if replaying a SNN
+TIMESTAMP_FOLDER = "2026-09-19_11-03-41" # folder name here
+
+'''
+ssn
+101 -> 2026-09-19_11-03-24
+102 -> 2026-09-19_11-03-26
+103 -> ???
+104 -> 2026-09-19_11-03-30
+105 -> 2026-09-19_11-03-32
+
+ann
+201 -> 2026-09-19_11-03-32
+202 -> 2026-09-19_11-03-34
+203 -> 2026-09-19_11-03-36
+204 -> 2026-09-19_11-03-38
+205 -> 2026-09-19_11-03-41
+'''
+
 # ----------------------------------
 
 # force deterministic random state

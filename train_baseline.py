@@ -81,18 +81,8 @@ def eval_genomes(genomes, config):
     best = max(genomes, key=lambda x: x[1].fitness)[1]
     print(f"Gen Best -> Fitness: {best.fitness:.1f} | Frames: {best.frames} | Best Run Energy: {best.energy_pj:.2f} pJ | Total Training Energy So Far: {total_training_energy_pj / 1e6:.2f} µJ")  
 
-    '''
-        num_connections = sum(1 for cg in genome.connections.values() if cg.enabled)
-        genome.frames = frame_counter
-        genome.macs = num_connections * frame_counter
-        # 1 MAC is estimated at roughly 4.6 pJ
-        genome.energy_pj = genome.macs * 4.6
 
-    best = max(genomes, key=lambda x: x[1].fitness)[1]
-    print(f"Gen Best -> Fitness: {best.fitness:.1f} | Frames: {best.frames} | MACs: {best.macs} | Energy: {best.energy_pj:.2f} pJ")
-    '''
-
-def run(config_path):
+def run(config_path, seed_value):
     config = neat.config.Config(neat.DefaultGenome, neat.DefaultReproduction, 
                                 neat.DefaultSpeciesSet, neat.DefaultStagnation, 
                                 config_path)
@@ -100,7 +90,7 @@ def run(config_path):
 
     # to save the results on logs
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    log_dir = os.path.join(local_dir, "logs", timestamp)
+    log_dir = os.path.join(local_dir, "logs", f"seed_{seed_value}_{timestamp}")
     os.makedirs(log_dir, exist_ok=True)
 
     with open(os.path.join(log_dir, ".keep"), "w") as f:
@@ -139,4 +129,4 @@ if __name__ == "__main__":
     print(f"--- STARTING RUN WITH RANDOM SEED: {seed_value} ---")
     
     config_path = os.path.join(local_dir, "config-MarI-O_NEAT.txt") 
-    run(config_path)
+    run(config_path, seed_value)
