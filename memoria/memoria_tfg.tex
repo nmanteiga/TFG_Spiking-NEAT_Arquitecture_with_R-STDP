@@ -24,6 +24,9 @@
 
 \usepackage{estilo_tfg}
 
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{3}
+
 % Lista de paquetes potencialmente interesantes (uso baixo demanda)
 
 % \usepackage{alltt}       % proporciona o entorno alltt, semellante a verbatim pero que respecta comandos
@@ -32,6 +35,7 @@
 % \usepackage{float}       % permite máis opcións para controlar obxectos flotantes (táboas, figuras)
 % \usepackage{hhline}      % permite personalizar as liñas horizontais en arrays e táboas
   \usepackage{longtable}   % permite construir táboas que ocupan máis dunha páxina
+  \usepackage{booktabs}    % liñas tipográficas para táboas
 % \usepackage{lscape}      % permite colocar partes do documento en orientación apaisada
 % \usepackage{moreverb}    % permite personalizar o entorno verbatim
 % \usepackage{multirow}    % permite crear celdas que ocupan varias filas da mesma táboa
@@ -39,14 +43,14 @@
 % \usepackage{rotating}    % permite diferentes tipos de rotacións para figuras e táboas
 % \usepackage{subcaption}  % permite a inclusión de varias subfiguras nunha figura
 % \usepackage{tabu}        % permite táboas flexibles
-% \usepackage{tabularx}    % permite táboas con columnas de anchura determinada
+  \usepackage{tabularx}    % permite táboas con columnas de anchura determinada
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Corpo                                                                        %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{document}
-\nocite{stanley2002,gerstner2014,qiu2018evolving,mozafari2018,schwartz2020green,sethbling2015mario,techwithtim2019flappy}
+\nocite{stanley2002,gerstner2014,qiu2018evolving,mozafari2018,schwartz2020green,sethbling2015mario,hebb1949,izhikevich2007,florian2007,legenstein2008,fremaux2016}
 
  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
  % Preliminares do documento            %
@@ -78,7 +82,8 @@
  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
  \include{contido/introducion}
- \include{contido/estado_arte}
+ \include{contido/background}
+ \include{contido/state_art}
  %\include{contido/design}
  %\include{contido/experiment}
  \include{contido/conclusions}

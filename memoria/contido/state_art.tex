@@ -1,0 +1,58 @@
+\chapter{State of the Art}
+
+This chapter reviews existing approaches related to neuroevolution, game-playing agents, spiking neural networks, plasticity, and energy-aware control. It concludes by identifying the gap addressed by the proposed Spiking-NEAT architecture.
+
+\section{Neuroevolution for Game Playing}
+
+Neuroevolution has been extensively applied to video games because it can learn directly from interaction without requiring labelled datasets. A foundational demonstration is MarI/O, which applies NEAT to Super Mario World and evolves control policies through repeated trial and error \cite{sethbling2015mario}. This work shows that topology evolution can discover useful game behaviour without prior knowledge of the environment or its controls. However, standard NEAT controllers normally use continuous artificial neural networks and therefore perform floating-point operations at every decision step.
+
+\section{Learning Agents for Platform Games}
+
+Gradient-based deep reinforcement learning has become a dominant approach for game control. Deep Q-learning demonstrated human-level performance on a broad set of Atari games \cite{mnih2015human}. More recent work has studied safe actor-critic methods and experience-sharing approaches for Super Mario Bros \cite{ogrady2024safe,zhao2026experience}. These methods demonstrate the power of deep reinforcement learning, but they generally require many environment interactions and dense floating-point computation. This creates a practical trade-off between control performance, sample efficiency, and energy consumption.
+
+\section{Spiking Networks Trained with Reinforcement Learning or Evolution}
+
+Spiking neural networks have been combined with both reinforcement learning and neuroevolution to reduce the computational cost of continuous controllers. Qiu et al. \cite{qiu2018evolving} demonstrated that recurrent SNN controllers evolved with NEAT can solve nonlinear control problems. Other work has explored evolutionary architecture search for SNNs while explicitly considering spike activity and accuracy \cite{zhang2024brain}. Hybrid spiking actor networks have also been proposed for continuous control using surrogate-gradient training \cite{tang2026spiking}. These approaches support the use of SNNs for control, but many rely on offline optimisation or static weights during deployment.
+
+\section{Reward-Modulated Plasticity in Spiking Agents}
+
+Biologically plausible three-factor learning rules provide a way for an SNN to adapt locally without global backpropagation. Mozafari et al. \cite{mozafari2018} demonstrated that Reward-Modulated STDP can train an SNN for visual categorisation using only spike activity and a reward signal. This result is important for the proposed architecture, although static image classification does not include the delayed rewards and sequential credit-assignment problem of a platform game.
+
+\section{Evolved Plastic and Neuromodulated Networks}
+
+Evolved Plastic Artificial Neural Networks introduce lifetime learning into evolved controllers. Soltoggio et al. \cite{soltoggio2008} showed the advantages of neuromodulated plasticity in dynamic, reward-based tasks, although their experiments generally used fixed topologies. In spiking systems, Efe \cite{efe2021} combined evolutionary adaptation with dopamine-modulated STDP and showed that lifetime plasticity is useful for tasks such as nutritional foraging. Pontes-Filho et al. \cite{pontesfilho2022} similarly investigated STDP-based neuroevolution for low-level artificial general intelligence, including logic gates and foraging.
+
+\section{Energy-Aware and Neuromorphic Control}
+
+The motivation for combining sparse topology, spiking computation, and local plasticity is closely related to Green AI, which argues that computational cost and environmental impact should be reported alongside accuracy \cite{schwartz2020green}. Neuromorphic processors such as Intel Loihi are designed to exploit event-driven computation and on-chip learning \cite{davies2018loihi}. Hardware energy estimates show that arithmetic and data movement costs can differ substantially across computing platforms \cite{horowitz2014computing}. Recent neuromorphic-control work further motivates evaluating event-driven controllers under explicit system-level assumptions \cite{foehr2025}. Consequently, an operation-count model is useful for a software prototype, provided that its assumptions and limitations are reported explicitly.
+
+\section{Comparative Analysis and Gap Identification}
+
+The literature shows progress across several related areas. NEAT evolves topology for dynamic tasks, while LIF-based SNNs replace continuous activations with sparse spike events. R-STDP adds local, reward-dependent lifetime adaptation. Prior work has combined some of these components on control or small-scale tasks, but the complete combination has not been evaluated here on a sequential platform game with pixel-derived input and an explicit inference-time energy comparison.
+
+Table~\ref{tab:related-work} positions this project against representative approaches.
+
+\begin{table}[htbp]
+    \centering
+    \footnotesize
+    \caption{Positioning of related work.}
+    \label{tab:related-work}
+    \setlength{\tabcolsep}{4pt}
+    \renewcommand{\arraystretch}{1.25}
+    \begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{2.3cm} >{\raggedright\arraybackslash}p{1.2cm} >{\raggedright\arraybackslash}p{2.2cm} >{\centering\arraybackslash}p{1.1cm} >{\centering\arraybackslash}p{1.3cm} >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X@{}}
+        \toprule
+        Work & Network & \shortstack[l]{Learning\\rule} & \shortstack[c]{Topology\\evolved} & \shortstack[c]{Lifetime\\plasticity} & Task & \shortstack[l]{Energy\\analysis} \\
+        \midrule
+        Mnih et al. \cite{mnih2015human} & ANN & Backpropagation & No & No & Atari games & Not reported \\
+        MarI/O, NEAT \cite{sethbling2015mario,stanley2002} & ANN & Neuroevolution & Yes & No & Super Mario World & Not reported \\
+        Qiu et al. \cite{qiu2018evolving} & SNN (LIF) & NEAT & Yes & No & Nonlinear control & Not reported \\
+        Mozafari et al. \cite{mozafari2018} & SNN & R-STDP & No & No & Image categorisation & Qualitative \\
+        Soltoggio et al. \cite{soltoggio2008} & ANN & Neuromodulated evolution & No & Yes & Dynamic reward tasks & Not reported \\
+        Efe \cite{efe2021} & SNN & Dopamine-modulated STDP & Yes & Yes & Nutritional foraging & Not reported \\
+        Pontes-Filho et al. \cite{pontesfilho2022} & SNN & STDP-based & Yes & Yes & Foraging and logic gates & Not reported \\
+        \textit{This work} & SNN (LIF) & NEAT + R-STDP & Yes & Yes & Super Mario Bros & Estimated \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+The proposed work therefore evaluates whether a Spiking-NEAT controller with R-STDP can achieve at least 90\% of the baseline mean distance and completion rate, while requiring no more than 10\% additional completion time. The comparison will use five random seeds on Level 1-1 and will report both behavioural metrics and a theoretical inference-energy estimate.

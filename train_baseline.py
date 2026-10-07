@@ -10,6 +10,8 @@ import datetime
 import sys
 import random 
 
+# code carbon !! -> look this up for the energy consumption
+
 # this is only so mac does not crash 
 # env = gym_super_mario_bros.make('SuperMarioBros-v0', render_mode='human') # so it renders the machine playing
 env = gym_super_mario_bros.make('SuperMarioBros-1-1-v0')
@@ -77,8 +79,6 @@ def eval_genomes(genomes, config):
         genome.macs = num_connections * frame_counter
         genome.energy_pj = genome.macs * 4.6  # 4.6 pJ per MAC
         total_training_energy_pj += genome.energy_pj
-
-        # code carbon !!
 
     best = max(genomes, key=lambda x: x[1].fitness)[1]
     print(f"Gen Best -> Fitness: {best.fitness:.1f} | Frames: {best.frames} | Best Run Energy: {best.energy_pj:.2f} pJ | Total Training Energy So Far: {total_training_energy_pj / 1e6:.2f} µJ")  
