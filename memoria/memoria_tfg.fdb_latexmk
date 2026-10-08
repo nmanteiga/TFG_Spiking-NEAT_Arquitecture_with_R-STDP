@@ -1,35 +1,35 @@
 # Fdb version 4
-["bibtex memoria_tfg"] 1791392168.33884 "memoria_tfg.aux" "memoria_tfg.bbl" "memoria_tfg" 1791392172.45615 0
+["bibtex memoria_tfg"] 1791450545.41916 "memoria_tfg.aux" "memoria_tfg.bbl" "memoria_tfg" 1791450550.0911 0
   "./bibliografia/bibconf-en.bib" 1788620832 0 d41d8cd98f00b204e9800998ecf8427e ""
-  "./bibliografia/bibliografia.bib" 1791391955.7999 7487 668b983389dff4c7ad6c4b0f162841ee ""
+  "./bibliografia/bibliografia.bib" 1791450410.47033 13018 88c05296c12d20e014ebaf031dce7621 ""
   "/usr/local/texlive/2026/texmf-dist/bibtex/bst/ieeetran/IEEEtranN.bst" 1440712899 63583 d34cb6c328acc69716207f4a3421ad46 ""
-  "contido/background.aux" 1791392169.8998 8628 8d299fbc9c54ce3173e3db35b3428536 "xelatex"
-  "contido/conclusions.aux" 1791392169.98186 1798 1cd8c54b7b87d5d5ea308ed151865f5a "xelatex"
-  "contido/introducion.aux" 1791392169.76181 2513 ad5e18e7a845ef274bd3d4474bf51921 "xelatex"
-  "contido/state_art.aux" 1791392169.97737 3670 86e51c14c97c580a542890d14f2adedb "xelatex"
-  "memoria_tfg.aux" 1791392170.00981 3048 faf2c8d74500ebb2c4551e4713f36e74 "xelatex"
-  "portada/portada.aux" 1791392169.67332 1542 1b0131f85259cb72469aa38fd7a80290 "xelatex"
-  "portada/resumo.aux" 1791392169.68854 1620 5aedd5b4459e55c4b0b2d0a119f054a2 "xelatex"
+  "contido/background.aux" 1791450547.11805 8774 89cd53ab0552701a61ea104d3099d507 "xelatex"
+  "contido/conclusions.aux" 1791450547.41616 1799 eb88f05af2588d7971c97d8910d4ff72 "xelatex"
+  "contido/introducion.aux" 1791450546.86189 2525 32c45c475b0e8b5a869a40c962cb435a "xelatex"
+  "contido/state_art.aux" 1791450547.41088 5731 7332c49e21744c9367fe36900967ab54 "xelatex"
+  "memoria_tfg.aux" 1791450547.45935 4225 d378ae9d98022e9370292bed1780d9a0 "xelatex"
+  "portada/portada.aux" 1791450546.77395 1542 1b0131f85259cb72469aa38fd7a80290 "xelatex"
+  "portada/resumo.aux" 1791450546.78985 1620 5aedd5b4459e55c4b0b2d0a119f054a2 "xelatex"
   (generated)
   "memoria_tfg.bbl"
   "memoria_tfg.blg"
   (rewritten before read)
-["cusdep acn acr memoria_tfg"] 1791392168.44442 "memoria_tfg.acn" "memoria_tfg.acr" "memoria_tfg" 1791392172.45628 0
-  "memoria_tfg.acn" 1791392169.6069 0 d41d8cd98f00b204e9800998ecf8427e "xelatex"
+["cusdep acn acr memoria_tfg"] 0 "memoria_tfg.acn" "memoria_tfg.acr" "memoria_tfg" 1791450550.09124 -1
+  "memoria_tfg.acn" 1791450546.70375 0 d41d8cd98f00b204e9800998ecf8427e "xelatex"
   (generated)
   "memoria_tfg.acr"
   (rewritten before read)
-["cusdep glo gls memoria_tfg"] 1791392168.3186 "memoria_tfg.glo" "memoria_tfg.gls" "memoria_tfg" 1791392172.4561 0
-  "memoria_tfg.glo" 1791392169.6066 0 d41d8cd98f00b204e9800998ecf8427e "xelatex"
+["cusdep glo gls memoria_tfg"] 1791450543.16131 "memoria_tfg.glo" "memoria_tfg.gls" "memoria_tfg" 1791450550.09098 0
+  "memoria_tfg.glo" 1791450546.70322 0 d41d8cd98f00b204e9800998ecf8427e "xelatex"
   (generated)
   "memoria_tfg.gls"
   (rewritten before read)
-["xdvipdfmx"] 1791392170.43462 "memoria_tfg.xdv" "memoria_tfg.pdf" "memoria_tfg" 1791392172.45797 0
-  "memoria_tfg.xdv" 1791392170.01408 623060 703ef97102a2275043fdd5bb2085d538 "xelatex"
+["xdvipdfmx"] 1791450547.91133 "memoria_tfg.xdv" "memoria_tfg.pdf" "memoria_tfg" 1791450550.09303 0
+  "memoria_tfg.xdv" 1791450547.46424 717168 db3199a31e9fe75186053b50a797aff5 "xelatex"
   (generated)
   "memoria_tfg.pdf"
   (rewritten before read)
-["xelatex"] 1791392168.45855 "memoria_tfg.tex" "memoria_tfg.xdv" "memoria_tfg" 1791392172.45631 0
+["xelatex"] 1791450545.53127 "memoria_tfg.tex" "memoria_tfg.xdv" "memoria_tfg" 1791450550.09126 0
   "/usr/local/texlive/2026/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/local/texlive/2026/texmf-dist/fonts/tfm/adobe/helvetic/phvr8t.tfm" 1136768653 7040 b2bd27e2bfe6f6948cbc3239cae7444f ""
   "/usr/local/texlive/2026/texmf-dist/fonts/tfm/adobe/zapfding/pzdr.tfm" 1136768653 1528 f853c4d1b4e0550255e02831fdc8496f ""
@@ -205,33 +205,33 @@
   "/usr/local/texlive/2026/texmf.cnf" 1774209515 577 648cd9f92f9c0eac486f4c71c85cfbbe ""
   "bibliografia/acronimos.tex" 1788861576.2147 387 4639c411de1a3e3164ed2bde0107cebc ""
   "bibliografia/glosario.tex" 1788620832 543 33d59db273bd224cf908073c9d264c05 ""
-  "contido/background.aux" 1791392169.8998 8628 8d299fbc9c54ce3173e3db35b3428536 "xelatex"
-  "contido/background.tex" 1791391912.46194 32066 011d6f8a2cfcc83f84f2837db5c9a87d ""
-  "contido/conclusions.aux" 1791392169.98186 1798 1cd8c54b7b87d5d5ea308ed151865f5a "xelatex"
+  "contido/background.aux" 1791450547.11805 8774 89cd53ab0552701a61ea104d3099d507 "xelatex"
+  "contido/background.tex" 1791450436.17671 32407 0674dd1e6a21ab0eb0020df0d8eaacf2 ""
+  "contido/conclusions.aux" 1791450547.41616 1799 eb88f05af2588d7971c97d8910d4ff72 "xelatex"
   "contido/conclusions.tex" 1788946460.56522 48 0ec777d397f16373a06c21a2e0d217bc ""
-  "contido/introducion.aux" 1791392169.76181 2513 ad5e18e7a845ef274bd3d4474bf51921 "xelatex"
-  "contido/introducion.tex" 1791391664.87592 10774 e4cbfc71d87ec55459be81790547f9ff ""
-  "contido/state_art.aux" 1791392169.97737 3670 86e51c14c97c580a542890d14f2adedb "xelatex"
-  "contido/state_art.tex" 1791391661.40446 7145 01703563b11782b6a6752a9498ded73f ""
+  "contido/introducion.aux" 1791450546.86189 2525 32c45c475b0e8b5a869a40c962cb435a "xelatex"
+  "contido/introducion.tex" 1791448416.28642 10755 a0a90a216359062f4d09ba06cb2305c1 ""
+  "contido/state_art.aux" 1791450547.41088 5731 7332c49e21744c9367fe36900967ab54 "xelatex"
+  "contido/state_art.tex" 1791450511.6224 13919 d5b88150660476819ffbe5d33b59ebbc ""
   "estilo_tfg.sty" 1789029452.0981 8948 5c661a8665340957a778599533d25b54 ""
   "imaxes/backpropagation.png" 1790241646.01922 552792 5623913ace17ee9b423628a63f8ee3a9 ""
   "imaxes/euro_inf_seal_bachelor_light background.png" 1788620832 299304 8c7fe9d23131ead5756e37d4ee7cc6e6 ""
   "imaxes/tweanns1.png" 1790241869.59941 176449 327f333f99e43bcee572e5bea3856005 ""
   "imaxes/tweanns2.png" 1790242016.54276 252497 1f68927a89b90a055f442188b55699ac ""
   "imaxes/udc.png" 1788620832 24371 f50ac2a46a5ce2cbb0a6d5a9b5eb0ac6 ""
-  "memoria_tfg.acr" 1791392168.45798 6 9f404503043ec80c08484be9f659189e "cusdep acn acr memoria_tfg"
-  "memoria_tfg.aux" 1791392170.00981 3048 faf2c8d74500ebb2c4551e4713f36e74 "xelatex"
-  "memoria_tfg.bbl" 1791392168.44309 7110 54a211ea7b39acaf5ed152525c84ea50 "bibtex memoria_tfg"
-  "memoria_tfg.gls" 1791392168.45811 6 9f404503043ec80c08484be9f659189e "cusdep glo gls memoria_tfg"
-  "memoria_tfg.lof" 1791392170.01399 1968 e4661d3db983707f3372dfe383a65d2b "xelatex"
-  "memoria_tfg.lot" 1791392170.01403 221 c93753709c5b059e0943c2eab6d85892 "xelatex"
-  "memoria_tfg.out" 1791392170.01368 2792 2bbee88f0982a16663fe2d5550bfbfe2 "xelatex"
+  "memoria_tfg.acr" 1791450543.17709 6 9f404503043ec80c08484be9f659189e "cusdep acn acr memoria_tfg"
+  "memoria_tfg.aux" 1791450547.45935 4225 d378ae9d98022e9370292bed1780d9a0 "xelatex"
+  "memoria_tfg.bbl" 1791450545.52809 10614 15438afdecf3d1afe3d986a13e1871e8 "bibtex memoria_tfg"
+  "memoria_tfg.gls" 1791450543.17694 6 9f404503043ec80c08484be9f659189e "cusdep glo gls memoria_tfg"
+  "memoria_tfg.lof" 1791450547.46416 1968 e4661d3db983707f3372dfe383a65d2b "xelatex"
+  "memoria_tfg.lot" 1791450547.46419 409 3ddbbc004f5832d4b205eb33c7d0387d "xelatex"
+  "memoria_tfg.out" 1791450547.46382 2622 a356e35e75fd8914801b4d5ba2931f83 "xelatex"
   "memoria_tfg.tex" 1791391912.45454 4669 5876ee7243e97a5084b7bd2ff86ff13f ""
-  "memoria_tfg.toc" 1791392170.01396 3100 00b78e997c95ecd7acd72fcc7c27fe62 "xelatex"
+  "memoria_tfg.toc" 1791450547.46412 3298 038c70630e686225c6f5a7840e0f6da8 "xelatex"
   "portada/palabras_chave.tex" 1788620832 750 06b70facdc15a8ec661714d56ca671bc ""
-  "portada/portada.aux" 1791392169.67332 1542 1b0131f85259cb72469aa38fd7a80290 "xelatex"
+  "portada/portada.aux" 1791450546.77395 1542 1b0131f85259cb72469aa38fd7a80290 "xelatex"
   "portada/portada.tex" 1788620832 918 86054444dd4a6b98999e2671261e7ac9 ""
-  "portada/resumo.aux" 1791392169.68854 1620 5aedd5b4459e55c4b0b2d0a119f054a2 "xelatex"
+  "portada/resumo.aux" 1791450546.78985 1620 5aedd5b4459e55c4b0b2d0a119f054a2 "xelatex"
   "portada/resumo.tex" 1788620832 612 495e87b44dd907791eba117cc8a163a1 ""
   (generated)
   "contido/background.aux"

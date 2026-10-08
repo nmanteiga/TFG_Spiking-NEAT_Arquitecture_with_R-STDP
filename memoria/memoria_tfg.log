@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999998 (TeX Live 2026) (preloaded format=xelatex 2026.9.7)  7 OCT 2026 18:56
+This is XeTeX, Version 3.141592653-2.6-0.999998 (TeX Live 2026) (preloaded format=xelatex 2026.9.7)  8 OCT 2026 11:09
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1962,19 +1962,13 @@ Overfull \hbox (0.7793pt too wide) in paragraph at lines 19--20
 ward-Modulated Spike-Timing-Dependent
  []
 
-[2] [3]
-Overfull \hbox (8.97993pt too wide) in paragraph at lines 43--44
-\TU/LinLibertine(0)/m/n/10.95 project introduces Reinforcement Spike-Timing-Dep
-endent Plasticity (R-STDP) as the ”teacher”.
- []
-
-) [4]
+[2] [3]) [4]
 \openout2 = `contido/background.aux'.
 
  (./contido/background.tex
 Chapter 2.
 
-Overfull \hbox (4.67023pt too wide) in paragraph at lines 11--12
+Overfull \hbox (4.67023pt too wide) in paragraph at lines 12--13
 \TU/LinLibertine(0)/m/n/10.95 work’s predictions through supervised learning by
  systematically adjusting its internal weights
  []
@@ -1991,22 +1985,10 @@ File: imaxes/tweanns1.png Graphic file (type bmp)
 <imaxes/tweanns1.png>
 File: imaxes/tweanns2.png Graphic file (type bmp)
 <imaxes/tweanns2.png>
-
-Overfull \hbox (2.698pt too wide) in paragraph at lines 63--64
-\TU/LinLibertine(0)/m/n/10.95 weights. Also, having the global population all t
-ogether can cause the initially “stronger”
- []
-
-[7] [8] [9] [10] [11]
-Overfull \hbox (0.71364pt too wide) in paragraph at lines 114--115
-\TU/LinLibertine(0)/m/n/10.95 ing Neural Networks (SNNs) to successfully addres
-s the energy constraints of next-generation,
- []
-
-[12] [13]
-Overfull \hbox (0.19164pt too wide) in paragraph at lines 156--157
-\TU/LinLibertine(0)/m/n/10.95 differentiable implementation cannot be trained u
-sing standard continuous mathematics, such
+ [7] [8] [9] [10] [11] [12] [13]
+Overfull \hbox (7.91875pt too wide) in paragraph at lines 157--158
+\TU/LinLibertine(0)/m/n/10.95 mentation are difficult to train natively with st
+andard backpropagation due to non-differentiable
  []
 
 [14] [15] [16]) [17]
@@ -2014,39 +1996,78 @@ sing standard continuous mathematics, such
 
  (./contido/state_art.tex
 Chapter 3.
+
+Package natbib Warning: Citation `mnih2015dqn' on page 18 undefined on input li
+ne 15.
+
 [18
 
 
 
 
 ]
-Overfull \hbox (1.48378pt too wide) in paragraph at lines 23--24
-\TU/LinLibertine(0)/m/n/10.95 Evolved Plastic Artificial Neural Networks introd
-uce lifetime learning into evolved controllers.
- []
+
+Package natbib Warning: Citation `stanley2002neat' on page 19 undefined on inpu
+t line 25.
+
+
+Package natbib Warning: Citation `hunter2026sansac' on page 19 undefined on inp
+ut line 40.
+
+
+Package natbib Warning: Citation `pan2023brain' on page 19 undefined on input l
+ine 47.
 
 [19]
+
+Package natbib Warning: Citation `mozafari2018rstdp' on page 20 undefined on in
+put line 55.
+
+[20]
+
+Package natbib Warning: Citation `horowitz2014' on page 21 undefined on input l
+ine 84.
+
+
+Package natbib Warning: Citation `medvedeva2025' on page 21 undefined on input 
+line 86.
+
 LaTeX Font Info:    Font shape `TU/LinLibertine(0)/m/n' will be
-(Font)              scaled to size 9.0pt on input line 37.
+(Font)              scaled to size 9.0pt on input line 99.
 
-Overfull \hbox (3.3608pt too wide) in paragraph at lines 55--55
- []|[]| 
- []
+Package natbib Warning: Citation `mnih2015dqn' on page 21 undefined on input li
+ne 126.
 
-) [20]
+
+Package natbib Warning: Citation `stanley2002neat' on page 21 undefined on inpu
+t line 126.
+
+
+Package natbib Warning: Citation `pan2023brain' on page 21 undefined on input l
+ine 126.
+
+
+Package natbib Warning: Citation `hunter2026sansac' on page 21 undefined on inp
+ut line 126.
+
+
+Package natbib Warning: Citation `mozafari2018rstdp' on page 21 undefined on in
+put line 126.
+
+[21]) [22]
 \openout2 = `contido/conclusions.aux'.
 
  (./contido/conclusions.tex
 Chapter 4.
-) [21
+) [23
 
 
 
 
-] (./memoria_tfg.acr) (./memoria_tfg.gls) (./memoria_tfg.bbl [22
+] (./memoria_tfg.acr) (./memoria_tfg.gls) (./memoria_tfg.bbl [24
 
 
-] [23
+] [25
 
 ]
 Underfull \hbox (badness 8019) in paragraph at lines 86--89
@@ -2054,7 +2075,11 @@ Underfull \hbox (badness 8019) in paragraph at lines 86--89
 ][]$[][][][][] [] [] [] [][][][][][] [] [][][] [] [][][][][][][][] []
  []
 
-[24]) [25] (./memoria_tfg.aux (./portada/portada.aux) (./portada/resumo.aux)
+[26]) [27]
+
+Package natbib Warning: There were undefined citations.
+
+(./memoria_tfg.aux (./portada/portada.aux) (./portada/resumo.aux)
 (./contido/introducion.aux) (./contido/background.aux) (./contido/state_art.aux
 ) (./contido/conclusions.aux))
  ***********
@@ -2062,15 +2087,15 @@ LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
  ***********
 Package rerunfilecheck Info: File `memoria_tfg.out' has not changed.
-(rerunfilecheck)             Checksum: 2BBEE88F0982A16663FE2D5550BFBFE2;2792.
+(rerunfilecheck)             Checksum: A356E35E75FD8914801B4D5BA2931F83;2622.
  ) 
 Here is how much of TeX's memory you used:
- 37711 strings out of 468168
- 791884 string characters out of 5432816
- 1293454 words of memory out of 5000000
- 65870 multiletter control sequences out of 15000+600000
- 639920 words of font info for 131 fonts, out of 8000000 for 9000
+ 37757 strings out of 468168
+ 792908 string characters out of 5432816
+ 1298453 words of memory out of 5000000
+ 65915 multiletter control sequences out of 15000+600000
+ 639928 words of font info for 132 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
- 102i,15n,145p,2495b,578s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 102i,13n,145p,2495b,578s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on memoria_tfg.xdv (33 pages, 623060 bytes).
+Output written on memoria_tfg.xdv (35 pages, 717168 bytes).

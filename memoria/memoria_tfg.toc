@@ -25,12 +25,16 @@
 \contentsline {subsection}{\numberline {2.3.1}Spike-Timing-Dependent Plasticity (STDP)}{16}{subsection.2.3.1}%
 \contentsline {subsection}{\numberline {2.3.2}Reward-Modulated STDP (R-STDP)}{17}{subsection.2.3.2}%
 \contentsline {chapter}{\numberline {3}State of the Art}{18}{chapter.3}%
-\contentsline {section}{\numberline {3.1}Neuroevolution for Game Playing}{18}{section.3.1}%
-\contentsline {section}{\numberline {3.2}Learning Agents for Platform Games}{18}{section.3.2}%
-\contentsline {section}{\numberline {3.3}Spiking Networks Trained with Reinforcement Learning or Evolution}{19}{section.3.3}%
-\contentsline {section}{\numberline {3.4}Reward-Modulated Plasticity in Spiking Agents}{19}{section.3.4}%
-\contentsline {section}{\numberline {3.5}Evolved Plastic and Neuromodulated Networks}{19}{section.3.5}%
-\contentsline {section}{\numberline {3.6}Energy-Aware and Neuromorphic Control}{19}{section.3.6}%
-\contentsline {section}{\numberline {3.7}Comparative Analysis and Gap Identification}{20}{section.3.7}%
-\contentsline {chapter}{\numberline {4}Conclusións}{21}{chapter.4}%
-\contentsline {chapter}{Bibliography}{23}{chapter*.8}%
+\contentsline {section}{\numberline {3.1}Game-playing controllers}{18}{section.3.1}%
+\contentsline {paragraph}{Gradient-based deep reinforcement learning.}{18}{paragraph*.7}%
+\contentsline {paragraph}{Neuroevolution.}{18}{paragraph*.8}%
+\contentsline {paragraph}{Summary.}{19}{paragraph*.9}%
+\contentsline {section}{\numberline {3.2}Spiking networks for control}{19}{section.3.2}%
+\contentsline {paragraph}{Gradient-based training.}{19}{paragraph*.10}%
+\contentsline {paragraph}{Evolutionary training.}{19}{paragraph*.11}%
+\contentsline {section}{\numberline {3.3}Reward-modulated plasticity in spiking agents}{20}{section.3.3}%
+\contentsline {section}{\numberline {3.4}Evolved plastic networks}{20}{section.3.4}%
+\contentsline {section}{\numberline {3.5}Energy-aware evaluation and neuromorphic hardware}{21}{section.3.5}%
+\contentsline {section}{\numberline {3.6}Comparative analysis and research gap}{21}{section.3.6}%
+\contentsline {chapter}{\numberline {4}Conclusións}{23}{chapter.4}%
+\contentsline {chapter}{Bibliography}{25}{chapter*.13}%

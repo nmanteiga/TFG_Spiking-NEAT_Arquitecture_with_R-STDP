@@ -1,5 +1,5 @@
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {3.1}{\ignorespaces \xpg@aux {}{english}\ignorespaces Positioning of related work.}}{20}{table.caption.7}%
+\contentsline {table}{\numberline {3.1}{\ignorespaces \xpg@aux {}{english}\ignorespaces Positioning of related work. ``n/r'': not reported in the cited work. ``Local plasticity'' means that weights change through local (STDP-type) rules; it does not indicate whether learning continues after deployment.}}{22}{table.caption.12}%
 \addvspace {10\p@ }
