@@ -1,15 +1,11 @@
 \chapter{Theoretical Background}
 \label{ch:background}
 
-This chapter establishes the theoretical and mathematical foundations required to contextualize the contributions of this document. It details the mathematical models and algorithms surrounding neuroevolutionary algorithms, Spiking Neural Networks (SNNs), and biologically plausible learning rules. By analyzing recent advancements and their inherent limitations, this section constructs the conceptual framework necessary to justify the proposed Spiking-NEAT architecture and its application in dynamic control environments.
-
-
-
-
+This chapter introduces the theoretical and mathematical foundations needed to follow the rest of this document. It describes the models and algorithms behind neuroevolution, Spiking Neural Networks (SNNs) and biologically inspired learning rules, and it explains why the three are combined in the proposed Spiking-NEAT architecture for dynamic control tasks. Related work is reviewed separately in Chapter~\ref{ch:sota}.
 
 \section{Neuroevolution and Genetic Algorithms}
 
-Historically, the standard method for training Artificial Neural Networks (ANNs) is the backpropagation algorithm. The fundamental purpose of backpropagation is to optimize a network's predictions through supervised learning by systematically adjusting its internal weights and biases to minimize a mathematical error.
+The standard method for training Artificial Neural Networks (ANNs) is the backpropagation algorithm. Its purpose is to optimise a network's predictions by systematically adjusting its weights and biases to minimise a measure of error. In its classical, supervised form it learns from examples for which the correct output is known.
 
 \begin{figure}[htbp]
     \centering
@@ -18,129 +14,112 @@ Historically, the standard method for training Artificial Neural Networks (ANNs)
     \label{fig:backpropagation}
 \end{figure}
 
-As illustrated in Figure~\ref{fig:backpropagation}, this training process operates in four distinct phases:
+As illustrated in Figure~\ref{fig:backpropagation}, training operates in four phases:
 
 \begin{enumerate}
-    \item \textbf{The Forward Pass:} Input data propagates forward through the network's interconnected hidden layers. Each node extracts features and applies continuous mathematical transformations until the final layer outputs a prediction.
-    \item \textbf{Error Calculation:} A predefined loss function evaluates this output, measuring the mathematical discrepancy (the error) between the network's prediction and the actual ``ground truth'' provided by the training dataset.
-    \item \textbf{The Backward Pass:} The algorithm calculates the gradient of the loss function. It then moves backward through the network, effectively distributing the ``blame'' for the error by calculating exactly how much each individual weight and bias needs to be adjusted to improve the next prediction.
-    \item \textbf{The Optimizer Step:} An optimizer uses the calculated gradients to update the network weights and improve the next prediction.
+    \item \textbf{Forward pass:} the input propagates forward through the network's layers. Each node applies a weighted sum and a nonlinear function until the final layer outputs a prediction.
+    \item \textbf{Error calculation:} a loss function measures the discrepancy (the error) between the prediction and the ``ground truth'' provided by the training dataset.
+    \item \textbf{Backward pass:} the algorithm computes the gradient of the loss and moves backward through the network, assigning to each weight and bias its share of the error.
+    \item \textbf{Optimizer step:} an optimizer uses these gradients to update the weights so that the next prediction improves.
 \end{enumerate}
 
-While this gradient descent method is incredibly powerful for supervised tasks like image classification, it possesses two strict requirements: it relies on massive datasets of ``correct answers'' to calculate the initial loss, and it requires continuous, differentiable activation functions to calculate the gradients.
+Gradient descent is very powerful for supervised tasks such as image classification, but it has two requirements: it needs a large set of labelled examples to compute the loss, and it requires differentiable activation functions to compute the gradients.
 
-However, in dynamic control environments (such as autonomous robotics or video games like Super Mario Bros) there is no dataset of ``perfect moves'' to learn from. The AI only knows whether it survived or failed based on sparse environmental rewards. Because standard gradient-based backpropagation struggles in these unpredictable, data-poor scenarios, researchers turned to biology for a solution, giving rise to Neuroevolution (NE).
+In dynamic control problems, such as autonomous robotics or video games like Super Mario Bros, there is no dataset of ``perfect moves''. The agent only receives a sparse reward that tells it, after the fact, how well it did. Backpropagation can still be applied in this setting, as deep reinforcement learning shows \cite{mnih2015human}, but it then needs a very large number of environment interactions and still requires differentiable networks. Neuroevolution (NE) is an alternative that avoids gradients altogether.
 
-Neuroevolution is a prominent subfield of Artificial Intelligence that applies the principles of Darwinian natural selection to neural networks. Instead of training a single network with a dataset, Neuroevolution relies on Genetic Algorithms (GAs) to generate a "population" of many different candidate networks. The algorithm evaluates each network based on its performance in the environment (its fitness). The weakest networks are discarded, while the most successful ones are selected to produce a new generation through biological mechanics like crossover (combining traits from two parents) and mutation (random structural changes).
+Neuroevolution applies the principles of natural selection to neural networks. Instead of training a single network, it uses a Genetic Algorithm (GA) to maintain a ``population'' of candidate networks. Each network is evaluated in the environment and receives a score called its \emph{fitness}. The weakest networks are discarded, while the best ones are selected to produce the next generation through \emph{crossover} (combining the genes of two parents) and \emph{mutation} (random changes to weights or structure). Since fitness is computed only from the outcome of an episode, neither gradients nor labelled data are needed.
 
 \subsection{TWEANNs}
 
-Historically, early neuroevolutionary systems focused exclusively on optimizing the synaptic weights of a neural network, while its structural topology remained fixed by a human engineer. However, guessing the optimal architecture for a complex, dynamic environment is incredibly difficult. To overcome this, researchers developed Topology and Weight Evolving Artificial Neural Networks (TWEANNs) \cite{stanley2002}, algorithms designed to evolve both the connection weights and the physical structure of the network simultaneously.
-
-While TWEANNs represented a significant conceptual leap, their practical application was severely hindered by three critical limitations:
+Early neuroevolution systems optimised only the synaptic weights of a network whose topology was fixed by a human designer. Choosing a good architecture for a complex task is difficult, which motivated Topology and Weight Evolving Artificial Neural Networks (TWEANNs): algorithms that evolve both the connection weights and the structure of the network. Stanley and Miikkulainen \cite{stanley2002} identify three problems that limited earlier TWEANNs, and that NEAT was designed to solve.
 
 \begin{enumerate}
-    \item \textbf{The Competing Conventions (Permutation) Problem:} This is the most severe flaw in early neuroevolution. It occurs when two parent networks learn to solve the same problem, but encode their solutions using different internal topological orderings. If a genetic algorithm attempts to cross over (breed) these two parents, the resulting offspring will often suffer from missing or duplicated features. Because the algorithm has no way to align the mismatched hidden nodes, crossing over two highly successful parents frequently produces damaged offspring.
+    \item \textbf{Competing conventions (permutation) problem.} Two parent networks may solve the same problem while encoding their solutions with their hidden nodes in a different order. When such parents are crossed over (Figure~\ref{fig:competing_conventions}), the offspring often lose or duplicate parts of the solution, because the algorithm has no way to align the mismatched hidden nodes. Crossing two good parents can therefore produce a damaged offspring.
+    \item \textbf{Unprotected innovation.} A newly added structure, such as a hidden node, usually lowers fitness at first, until its weights are tuned. In a single unified population, such innovations are quickly eliminated by older and simpler networks whose weights are already tuned. A single pool also lets the initially fittest individuals take over the population, which reduces diversity.
+    \item \textbf{Topological bloat.} To ensure diversity, early methods started from populations of random, complex topologies. This filled the genomes with unjustified connections from the first generation and enlarged the search space unnecessarily.
 \end{enumerate}
 
-\begin{figure}[htbp]
+\begin{figure}[!t]
     \centering
-    \includegraphics[width=0.85\textwidth]{imaxes/tweanns1.png}
-    \caption{The competing conventions problem. The two networks compute the same exact function even though their hidden units appear in a different order and are represented by different chromosomes, making them incompatible for crossover. The figure shows that the two single-point recombinations are both missing one of the 3 main components of each solution. The depicted networks are only 2 of the 6 possible permutations of hidden unit orderings. Adapted from \cite{stanley2002}.}
+    \includegraphics[width=0.8\textwidth]{imaxes/tweanns1.png}
+    \caption[The competing conventions problem.]{The competing conventions problem. Two networks that compute the same function but list their hidden units in a different order are incompatible for crossover: both single-point recombinations lose one of the three components of the solution. Reproduced from Figure~1 of~\cite{stanley2002}.}
     \label{fig:competing_conventions}
 \end{figure}
 
-As illustrated in Figure~\ref{fig:competing_conventions}, crossing over two functional networks with different internal orderings results in offspring missing crucial information (e.g., missing node C or node A).
+As Figure~\ref{fig:competing_conventions} shows, crossing over two functionally equivalent networks with different internal orderings produces offspring that miss information (for example, node C or node A).
 
-\begin{figure}[htbp]
+These three problems made it hard for TWEANNs to scale to larger tasks. NEAT addresses each of them with one mechanism.
+
+\subsection{NeuroEvolution of Augmenting Topologies (NEAT)}
+
+NeuroEvolution of Augmenting Topologies (NEAT) \cite{stanley2002} addresses the limitations above through three mechanisms: crossover based on historical markings, protection of structural innovation through speciation, and incremental growth from minimal structures. Together, they allow evolution to optimise and complexify solutions at the same time.
+
+\subsubsection{Innovation numbers}
+The mechanism that resolves the competing conventions problem is the use of historical markings, or innovation numbers. In biology, homology allows organisms with different genetic structures to recombine because their genes share a common origin. NEAT uses an analogous idea: every new structural mutation (a new connection or a new hidden node) that appears in the population is assigned a unique, increasing integer, its global innovation number. Two genes with the same innovation number therefore descend from the same original mutation.
+
+This marking turns the problem of comparing different topologies into a linear alignment of gene lists. When two parents are crossed over, their genomes are aligned by innovation number (Figure~\ref{fig:innovation_numbers}) and the genes are classified into three types:
+
+\begin{itemize}
+    \item \textbf{Matching genes:} genes with the same innovation number in both parents. The offspring inherits each of them from a randomly chosen parent.
+    \item \textbf{Disjoint genes:} genes present in only one parent, whose innovation number lies within the range of the other parent's innovation numbers.
+    \item \textbf{Excess genes:} genes present in only one parent, whose innovation number lies beyond the range of the other parent's innovation numbers (at the end of the genome).
+\end{itemize}
+
+\begin{figure}[!t]
     \centering
-    \includegraphics[width=0.9\textwidth]{imaxes/tweanns2.png}
-    \caption{Matching up genomes for different network topologies using innovation numbers. Although Parent 1 and Parent 2 look different, their innovation numbers (shown at the top of each gene) tell us which genes match up with which. Even without any topological analysis, a new structure that combines the overlapping parts of the two parents as well as their different parts can be created. Matching genes are inherited randomly, whereas disjoint genes (those that do not match in the middle) and excess genes (those that do not match in the end) are inherited from the more fit parent. In this case, equal fitnesses are assumed, so the disjoint and excess genes are also inherited randomly. The disabled genes may become enabled again in future generations: there is a preset chance that an inherited gene is disabled if it is disabled in either parent. Adapted from \cite{stanley2002}.}
+    \includegraphics[width=0.75\textwidth]{imaxes/tweanns2.png}
+    \caption[Matching genomes with innovation numbers.]{Crossover with innovation numbers. The numbers at the top of each gene show which genes of the two parents match, so their genomes can be aligned without analysing the topology. Matching genes are inherited randomly; disjoint and excess genes come from the fitter parent (here equal fitness is assumed, so they are inherited randomly too). Reproduced from Figure~4 of~\cite{stanley2002}.}
     \label{fig:innovation_numbers}
 \end{figure}
 
-\begin{enumerate}
-    \setcounter{enumi}{1} % fuerza a que la lista empiece en el número 2
-    \item \textbf{Unprotected Innovation:} In evolutionary algorithms, a newly mutated structure (like a new hidden node) often causes a temporary drop in performance before its weights can be optimized. Early TWEANNs evaluated all networks in a single, unified pool. Consequently, new and complex topological innovations were immediately driven to extinction by older, structurally simpler networks that had already optimized their weights. Also, having the global population all together can cause the initially fitter individuals to prevail and drive other species of the global population to extinction; this is a hazard for innovation.
-    
-    \item \textbf{Topological Bloat:} To ensure genetic diversity, early models frequently initialized populations with complex, highly randomized topologies. This bloated the genomes with unjustified connections from the very first generation, unnecessarily expanding the mathematical search space and wasting computational resources.
-\end{enumerate}
+Disjoint and excess genes are inherited from the fitter parent; if both parents have equal fitness, they are inherited randomly. In addition, there is a preset probability that a gene remains disabled in the offspring if it is disabled in either parent. With this alignment, networks of very different sizes and topologies can be recombined without losing track of which gene performs which function.
 
-These three structural flaws meant that TWEANNs struggled to scale to high-dimensional tasks. The field required a structural advancement to make neuroevolution mathematically efficient and viable for complex control environments, a shift that was realized by the introduction of the NEAT algorithm.
-
-
-\subsection{NeuroEvolution of Augmented Topologies (NEAT)}
-
-NeuroEvolution of Augmented Topologies (NEAT) \cite{stanley2002} is a highly effective algorithm that resolves the historical limitations of TWEANNs. As detailed by Stanley and Miikkulainen \cite{stanley2002}, NEAT achieves increased efficiency through a principled method of crossover via historical markings, protection of structural innovation using speciation, and incremental growth from minimal structures. These mechanisms allow evolution to optimize and complexify solutions simultaneously, providing a powerful foundation for dynamic control tasks.
-
-\subsubsection{Innovation Numbers}
-The fundamental mechanism that allows NEAT to resolve the Competing Conventions problem is the implementation of historical markings, or innovation numbers. In biological evolution, homology allows organisms with different genetic structures to cross over safely because their genes share a common historical origin. NEAT mathematically replicates this biological principle by assigning a unique, incrementally increasing integer, a global innovation number, to every new structural mutation (such as a new connection or a new hidden node) that occurs within the population.
-
-This historical tracking transforms the complex topological analysis required by earlier TWEANNs into a highly efficient linear alignment problem. When two parent networks are selected for crossover, their genomes are aligned side-by-side using these numerical IDs. To perform this crossover without losing information, the algorithm categorizes the aligned genes into three distinct types:
-
-\begin{itemize}
-    \item \textbf{Matching genes:} Genes with the exact same innovation number present in both parents. These genes are inherited randomly by the offspring.
-    \item \textbf{Disjoint genes:} Genes present in one parent but missing in the other, while still falling strictly within the numerical range of the other parent's innovation numbers.
-    \item \textbf{Excess genes:} Genes present in one parent but missing in the other. These genes do not match at the end of the genome sequence, falling outside the numerical range of the overlapping innovation numbers.
-\end{itemize}
-
-During the recombination process, disjoint and excess genes are systematically inherited from the more fit parent to ensure advantageous structures are preserved. If both parents share equal fitness levels, these disjoint and excess genes are instead inherited randomly. Furthermore, to preserve structural memory, there is a preset probability that an inherited gene will remain disabled in the offspring if it was disabled in either of the parent genomes.
-
-By utilizing these historical markings, NEAT ensures that crossover remains orderly. The algorithm can effectively recombine networks of vastly different sizes and topologies without losing track of which gene performs which function, effectively ensuring that structural innovations are safely transferred to the next generation without information loss.
-
+\FloatBarrier
 \subsubsection{Speciation}
-The second major mechanism NEAT introduces to stabilize the evolutionary process is speciation, also known as niching. In traditional neuroevolution, adding a new structural mutation (such as a new node or connection) often causes a temporary drop in the network's overall performance before its new weights can be properly optimized. If the entire population competes in a single, unified pool, the initially fitter individuals prevail, and these new, innovative topologies are quickly driven to extinction by older, structurally simpler networks that have already fine-tuned their synaptic weights.
+The second mechanism is speciation, also known as niching. When a structural mutation is added, performance often drops temporarily until the new weights are optimised. If the whole population competes in a single pool, these new topologies are driven to extinction by older, simpler networks whose weights are already tuned.
 
-To prevent this hazard to innovation, NEAT divides the global population into distinct species based on their topological similarity. This categorization is achieved by comparing the historical innovation numbers discussed in the previous section. Genomes with a high number of matching genes are grouped together into the same species, while those with many disjoint or excess genes are separated into different niches.
+To prevent this, NEAT divides the population into species according to topological similarity, which it measures by using the innovation numbers described above: genomes with many matching genes are placed in the same species, whereas genomes with many disjoint or excess genes are placed in different ones.
 
-Once the population is divided, NEAT applies explicit fitness sharing to regulate competition and protect diversity. This mechanism forces individuals with similar genomes to share their fitness payoff within their specific niche, effectively utilizing fitness peaks to balance the population. By distributing the fitness rewards in this manner, the algorithm ensures that species compete primarily within their own topological group rather than against the entire global population. Consequently, initially "weaker" species are protected from premature extinction, granting newly mutated structures the necessary time and generational cycles to optimize their weights and demonstrate their true functional potential.
+Within each species, NEAT applies explicit fitness sharing: individuals in the same niche share their fitness, so that a large species cannot take over the whole population. Consequently, new structures compete mainly against similar genomes rather than against the whole population, which gives them the time to optimise their weights before they are judged.
 
 \subsubsection{Minimal structures}
-The third core innovation of NEAT addresses how the evolutionary process begins, specifically resolving the initialization problem observed in earlier Topology and Weight Evolving Artificial Neural Networks (TWEANNs). Historically, early TWEANNs initialized their populations with complex, highly randomized topologies to ensure genetic diversity. However, this approach inherently bloated the genomes with unjustified connections from the very first generation, which unnecessarily expanded the mathematical search space and wasted computational resources.
+The third mechanism concerns how evolution starts. NEAT begins with a population of minimal networks that have no hidden nodes: the inputs are connected directly to the outputs. Structure is added gradually, through mutations that insert new connections and new hidden nodes. A new structure persists only if it improves fitness enough to survive selection.
 
-NEAT fundamentally reverses this paradigm by starting the population with a completely minimal structure, meaning the initial candidate networks contain zero hidden nodes. Instead of beginning with complexity, NEAT allows structural complexity to emerge incrementally over time. New hidden nodes and synaptic connections are only added to the network through mutations if they provide a distinct functional benefit to the agent's performance.
+Growing from minimal structures keeps the search space small at the beginning and tends to produce compact networks, because added complexity must justify itself. It also shows that evolution can optimise and complexify solutions at the same time, in analogy to biological evolution.
 
-By incrementally growing from minimal structures, NEAT ensures that the final optimized network remains compact. This strategy drastically minimizes the dimensionality of the search space, which significantly boosts the algorithm's overall performance. Furthermore, this approach represents an important contribution to Genetic Algorithms (GAs) because it demonstrates that evolution can simultaneously optimize and complexify solutions. It offers the possibility of evolving increasingly complex architectures over generations, strongly reinforcing the algorithm's analogy with biological evolution.
+\subsubsection{Why NEAT?}
+Gradient-based deep reinforcement learning can play games such as Super Mario Bros, but it needs very large numbers of environment interactions \cite{mnih2015human}. Neuroevolution needs no gradients and no labelled dataset, only a fitness score per episode. Stanley and Miikkulainen \cite{stanley2002} report, through ablation studies and benchmark comparisons on the XOR problem and on double pole balancing, that NEAT was more efficient than the earlier neuroevolution methods they compared against. They attribute this to the three mechanisms above, which together prevent the three problems of TWEANNs.
 
-\subsubsection{Why is it better}
-Usually, the standard method for training Artificial Neural Networks (ANNs) is the backpropagation algorithm, which relies heavily on massive datasets of "correct answers" to calculate initial loss and requires continuous, differentiable activation functions to compute gradients. While Deep Reinforcement Learning successfully uses backpropagation for control in environments like Super Mario Bros, it requires massive amounts of environment interactions. Neuroevolution provides a gradient-free alternative. In these unpredictable scenarios, there is no dataset of "perfect moves" to learn from, the agent only knows whether it survived or failed based on sparse environmental rewards.
-
-Neuroevolution, and NEAT in particular, presents a viable alternative for these data-poor environments. Through extensive ablation studies and benchmark testing on complex control tasks (such as the XOR problem and double pole balancing) NEAT has consistently demonstrated superior performance over traditional neuroevolutionary methods. By leveraging its three core mechanisms (innovation numbers, speciation, and incremental growth from minimal structures), NEAT systematically resolves the Competing Conventions problem, protects structural innovation, and prevents topological bloat, thereby keeping the mathematical search space highly efficient. 
-
-Consequently, NEAT was chosen as the foundational "architect" to dynamically grow the network topology for this project. Its practical application is heavily inspired by Marl/O, a well-known demonstration of the NEAT algorithm successfully navigating a Super Mario Bros environment. This demonstration clearly illustrates that NEAT requires absolutely no prior information about the environment nor massive training datasets to function. The agent begins the simulation completely unaware of the controls, discovers movement through trial and error, and evolves purely based on fitness evaluation until it can clear the level autonomously. Because NEAT effectively solves the major shortcoming regarding initial data dependency and yields excellent results for continuous, high-dimensional control tasks, it serves as the effective baseline architecture for the subsequent integration of Spiking Neural Networks and R-STDP.
+For these reasons, and because it is the algorithm used in the MarI/O demonstration \cite{sethbling2015mario}, NEAT is chosen in this project to grow the network topology and as the baseline for the subsequent integration of spiking neurons and R-STDP.
 
 \subsubsection{Limitations}
-Despite this structural efficiency and proven success, current standard NEAT architectures possess a structural limitation: they rely heavily on continuous mathematical activation functions, such as the Sigmoid function, which are bounded between $[0, 1]$. Because these activation values are continuous floating-point fractions, the underlying hardware is forced to perform computationally expensive Multiply Accumulate (MAC) operations for every single synapse, at every single time step. Even if a node's activation is microscopically close to zero, the system must still execute floating-point arithmetic for every active synapse simply to calculate the next frame.
+Standard NEAT networks rely on continuous activation functions, such as the sigmoid function, whose outputs lie in $[0, 1]$. Because activations are continuous floating-point values, the hardware must perform a Multiply-Accumulate (MAC) operation for every synapse at every time step, even when a node's activation is close to zero.
 
-This persistent, unconditional computation drives a massive energy consumption problem. Consequently, standard NEAT becomes computationally demanding for modern edge-computing scenarios, such as autonomous robotics, aerospace applications, and Internet of Things (IoT) devices, where extreme energy efficiency is mandatory. This critical computational bottleneck exposes the gap in current research and directly necessitates the transition toward Spiking Neural Networks (SNNs) to successfully address the energy constraints of next-generation, hardware-deployable AI.
-
-
-
-
+This unconditional computation makes inference energy-intensive, which is a problem for edge-computing scenarios such as autonomous robotics, aerospace applications and Internet-of-Things (IoT) devices, where energy budgets are tight. This motivates replacing the continuous neurons with spiking ones.
 
 \section{Green AI and Spiking Neural Networks (SNNs)}
 
 \subsection{Green AI}
 
-As previously mentioned, the world is currently experiencing the rapid rise and commercialization of AI and GPAI. However, there is ongoing dispute regarding the computational cost of running these machines and the vast volumes of data they require. Most of these modern architectures fall under the category of Red AI. According to Schwartz et al., ``Red AI refers to AI research that seeks to obtain state-of-the-art results in accuracy (or related measures) through the use of massive computational power---essentially `buying' stronger results'' \cite{schwartz2020green}. While Red AI focuses primarily on maximizing accuracy through sheer computational force, Green AI advocates for treating energy efficiency and computational cost as primary evaluation metrics alongside accuracy \cite{schwartz2020green}. Consequently, this project evaluates energy efficiency as a core metric, operating under the premise that it is just as valuable as model accuracy.
+The rapid rise and commercialization of AI and GPAI has been accompanied by growing concern about the computational cost of training and running these systems. Schwartz et al.\ distinguish two research cultures. ``Red AI refers to AI research that seeks to obtain state-of-the-art results in accuracy (or related measures) through the use of massive computational power---essentially `buying' stronger results'' \cite{schwartz2020green}. Green AI, in contrast, advocates for treating computational cost and energy efficiency as evaluation criteria alongside accuracy \cite{schwartz2020green}. This project follows the Green AI view and reports energy as a core metric next to performance.
 
-The cost of producing an AI result can be described by the cost of one model execution, the dataset size, and the number of hyperparameter experiments:
+Schwartz et al.\ describe the cost of producing an AI result $R$ as proportional to the cost of executing the model on one example, the size of the dataset, and the number of hyperparameter experiments:
 
 \begin{equation}
-    \operatorname{Cost}(R) \propto E \cdot D \cdot H.
+    \operatorname{Cost}(R) \propto E \cdot D \cdot H,
 \end{equation}
 
-Here, $E$ is the execution cost for one example, $D$ is the dataset size, and $H$ is the number of experiments.
+where $E$ is the execution cost for one example, $D$ is the dataset size, and $H$ is the number of experiments.
 
-Furthermore, standard implementations are computationally expensive primarily because they rely on continuous floating-point weights and activations, requiring the underlying hardware to perform Multiply-Accumulate (MAC) operations for every active synapse at each timestep. The activation function is a mathematical equation that determines whether a given node should remain inactive or fire, defining its output. The vast majority of Red AI alternatives utilize continuous activation functions, such as Sigmoid or ReLU. The fundamental issue is that these functions rely on continuous floating-point numbers, requiring the underlying hardware to perform complex matrix floating-point operations constantly.
+Conventional networks are expensive to execute in part because they use continuous floating-point weights and activations, so the hardware performs a MAC operation for every active synapse at every time step. The activation function is the nonlinear function that maps a node's weighted input to its output; widely used examples are the sigmoid and the ReLU, both of which produce continuous values.
 
-As Schwartz et al. observe: ``Ironically, deep learning was inspired by the human brain, which is remarkably energy efficient'' \cite{schwartz2020green}. As mentioned previously, a biological brain does not physically operate like an open tap, rather, it processes information via discrete spikes. A biological neuron is divided into three main components: dendrites, the soma, and the axon. Roughly speaking, the dendrites can be considered the ``input system,'' the soma acts as the central processor or ``GPU,'' and the axon serves as the ``output system'' \cite{gerstner2014}. Electrical energy travels through these components, and a sufficient accumulation of voltage triggers an action potential, which is referred to as a discrete spike. A sequence of these spikes over time constitutes a spike train. These biological mechanics form the foundational principles of Spiking Neural Networks (SNNs) \cite{gerstner2014}. Utilizing spikes as an activation mechanism renders the architecture significantly more energy-efficient, as it relies on discrete, binary event-driven signals rather than continuous floating-point operations. Furthermore, SNNs are fundamentally inspired by electrical circuitry, making them highly optimized for neuromorphic hardware translation.
+The biological brain does not operate like an open tap: neurons exchange discrete pulses. A biological neuron has three main parts: the dendrites, which receive input; the soma (cell body), which integrates it; and the axon, which transmits the output \cite{gerstner2014}. When the accumulated voltage at the soma is sufficiently high, the neuron emits an action potential, a brief pulse called a spike. A sequence of spikes over time is a spike train. These mechanisms are the basis of SNNs \cite{gerstner2014}. Because spikes are binary events, a spiking network can in principle replace multiplications by additions and does no transmission when there is no spike. This can be energy-efficient if activity is sparse and the hardware is designed to exploit it, as in neuromorphic processors.
 
-\subsection{SNN Fundamentals and the LIF Model}
+\subsection{SNN fundamentals and the LIF model}
 
-However, for an SNN to function computationally, it requires a physical mathematical abstraction. In this project, that abstraction is the Leaky Integrate-and-Fire (LIF) model \cite{gerstner2014}. As the name suggests, the LIF model governs neuronal dynamics through three distinct stages: integrate, leak, and fire. First, the neuron accumulates energy from incoming synaptic spikes, which raises its internal membrane potential (integration). Second, the membrane possesses a natural electrical resistance, if spikes do not arrive fast enough, the membrane progressively loses voltage, returning toward its resting state (leak). Finally, if the integration outpaces the leak and surpasses a strict voltage threshold, the neuron instantly emits a binary spike and resets its internal voltage to a baseline (fire). In this architecture, every continuous node generated by the NEAT algorithm is replaced by this discrete LIF physical model.
+An SNN needs a mathematical model of the neuron. In this project it is the Leaky Integrate-and-Fire (LIF) model \cite{gerstner2014}. As its name indicates, it has three stages: integrate, leak and fire. First, the neuron accumulates the input from incoming spikes, which raises its membrane potential (integration). Second, the membrane is not a perfect integrator: if input spikes do not arrive often enough, the potential decays back toward its resting value (leak). Finally, when the potential reaches a threshold, the neuron emits a binary spike and its potential is reset to a baseline value (fire). In the proposed architecture, each continuous node generated by NEAT is replaced by an LIF neuron.
 
-The LIF model can be written as an electrical circuit with membrane capacitance $C$, membrane resistance $R$, input current $I(t)$, and membrane potential $u(t)$:
+The LIF model can be written as an electrical circuit with membrane capacitance $C$, membrane resistance $R$, input current $I(t)$ and membrane potential $u(t)$ \cite{gerstner2014}:
 
 \begin{equation}
     I(t) = I_R(t) + I_C(t), \qquad I_R(t) = \frac{u(t)-u_{\mathrm{rest}}}{R}, \qquad I_C(t) = C\frac{du(t)}{dt}.
@@ -154,42 +133,50 @@ Combining these terms gives the membrane equation
 
 When $u(t)$ reaches the threshold $\vartheta$, the neuron emits a spike and its potential is reset to $u_{\mathrm{reset}}$.
 
-This section has outlined the significant computational advantages of SNNs and the LIF model, demonstrating why they serve as a powerful framework for achieving Green AI efficiency. While combining the NEAT algorithm with LIF neurons yields an proposed Spiking-NEAT architecture, it introduces a critical challenge: this discrete, non-differentiable implementation are difficult to train natively with standard backpropagation due to non-differentiable spikes, often requiring workarounds like surrogate gradients. A Spiking-NEAT architecture requires a biologically plausible learning rule to optimize its weights, which leads to the final core component of this project: biological Reinforcement Learning.
+Simulations on a digital computer use a discrete-time version of this model, in which the potential is updated once per time step. In the form used in this project, the potential first accumulates the incoming current $I_t$, is then multiplied by a leak factor $\beta\in(0,1)$ (the discrete counterpart of the exponential decay with time constant $\tau_m$), and the neuron spikes if the result reaches the threshold:
 
-\subsection{Training Spiking Networks}
+\begin{equation}
+    u_t = \beta\,\max\bigl(u_{t-1} + I_t,\; u_{\mathrm{rest}}\bigr), \qquad s_t = \begin{cases} 1, & u_t \ge \vartheta,\\ 0, & \text{otherwise,}\end{cases}
+\end{equation}
 
-Historically, SNNs were viewed as difficult to train via standard backpropagation due to the non-differentiable nature of discrete spikes. While modern techniques like Surrogate Gradients [9] have emerged to approximate these derivatives and enable gradient-based optimization in SNNs, they can be memory-intensive for continuous, online learning. Therefore, for an autonomous agent requiring real-time adaptability, biologically plausible local learning rules like Spike-Timing-Dependent Plasticity (STDP) present an attractive alternative.
+with $u_t$ reset to $u_{\mathrm{reset}}$ after a spike. The $\max$ keeps the potential from falling below the resting value, which is taken as zero (and equal to the reset value) in the implementation.
 
-Furthermore, integrating SNNs with neuroevolution provides a framework for discovering effective network architectures. For instance, Qiu et al. [3] demonstrated that recurrent spiking controllers evolved using NEAT can be applied to continuous nonlinear control domains, such as the pole-balancing problem. While Qiu et al. utilized NEAT to evolve the static weights and topologies of SNNs, the incorporation of local learning rules like R-STDP for intra-generational weight adaptation remains under-explored.
+Combining NEAT with LIF neurons gives the proposed Spiking-NEAT architecture. This has a consequence for training: spikes are binary events and therefore not differentiable, so such networks cannot be trained directly with standard backpropagation, and gradient-based approaches need workarounds such as surrogate gradients. A Spiking-NEAT architecture therefore requires a learning rule that does not depend on gradients. Reward-modulated plasticity, introduced in Section~\ref{sec:rstdp}, is one such rule.
 
-\subsection{Theoretical Energy Estimation}
+\subsection{Training spiking networks}
+
+SNNs are difficult to train with standard backpropagation because of the non-differentiable nature of spikes. Surrogate-gradient methods \cite{neftci2019surrogate} address this by replacing the derivative of the spike function with a smooth approximation during the backward pass, which makes gradient-based optimisation possible; however, backpropagation through time requires storing the network's state over many time steps, which makes it costly for continuous, online learning. For an autonomous agent that must adapt while it acts, local learning rules, such as Spike-Timing-Dependent Plasticity (STDP) and its reward-modulated variant, are an attractive alternative, because each synapse is updated using only information available locally.
+
+Integrating SNNs with neuroevolution is another way to obtain effective networks without gradients. For instance, Qiu et al.\ \cite{qiu2018evolving} applied NEAT to evolve recurrent spiking controllers for nonlinear control problems in continuous domains. In their work, evolution determined the weights and topology of the spiking network, which then stayed fixed during operation. Combining evolved topologies with local plasticity for adaptation within an episode has been explored only on small tasks (Section~\ref{sec:sota-epann}).
+
+\subsection{Theoretical energy estimation}
 \label{sec:energy-estimation}
 
-The energy comparison in this project is limited to inference-time arithmetic operations. A conventional controller is modelled using Multiply-Accumulate (MAC) operations, while the spiking controller is modelled using Synaptic Operations (SynOps), membrane updates, and input encoding:
+The energy comparison in this project is limited to arithmetic operations at inference time. A conventional controller is modelled by its Multiply-Accumulate (MAC) operations and its activation-function evaluations, while the spiking controller is modelled by its Synaptic Operations (SynOps), its membrane updates and the input encoding:
 
 \begin{equation}
-    E_{\mathrm{ANN}} = (N_{\mathrm{MAC}} E_{\mathrm{MAC}}) + (N_{\mathrm{activation}} E_{\mathrm{activation}}).
+    E_{\mathrm{ANN}} = N_{\mathrm{MAC}} E_{\mathrm{MAC}} + N_{\mathrm{act}} E_{\mathrm{act}},
 \end{equation}
 
 \begin{equation}
-    E_{\mathrm{SNN}} = (N_{\mathrm{SynOp}} E_{\mathrm{AC}}) + (N_{\mathrm{update}} E_{\mathrm{update}}) + E_{\mathrm{encoding}}.
+    E_{\mathrm{SNN}} = N_{\mathrm{SynOp}} E_{\mathrm{AC}} + N_{\mathrm{update}} E_{\mathrm{update}} + E_{\mathrm{encoding}}.
 \end{equation}
 
-Using the commonly cited 45-nm estimates from Horowitz \cite{horowitz2014computing}, a 32-bit floating-point MAC costs approximately $4.6\,\mathrm{pJ}$ and an accumulate operation costs approximately $0.9\,\mathrm{pJ}$. Membrane leak updates are counted explicitly rather than ignored, and memory-access energy is outside the scope of this arithmetic model. The reported efficiency metric is therefore the ratio $E_{\mathrm{SNN}}/E_{\mathrm{ANN}}$, together with the operation counts used to obtain it.
+Here $N_{\mathrm{MAC}}$ is the number of MAC operations, $N_{\mathrm{act}}$ the number of activation-function evaluations, $N_{\mathrm{SynOp}}$ the number of synaptic operations (one accumulate per spike delivered through a synapse), and $N_{\mathrm{update}}$ the number of membrane updates, each with its corresponding energy cost per operation.
 
-In the SNN, $N_{\mathrm{update}}$ represents the total number of membrane leak updates. Because biological neurons continuously ``leak'' voltage over time, calculating this natural decay every frame requires a decimal multiplication; therefore, $E_{\mathrm{update}}$ is treated as equivalent to a heavy MAC operation ($4.6\,\mathrm{pJ}$), preventing an underestimation of the SNN cost. Furthermore, because SNNs process discrete spikes rather than raw pixels, the extra mathematical operations needed to convert the observation grid into spike trains over the internal time steps are calculated as $E_{\mathrm{encoding}}$. This encoding cost is obtained by counting the operations required to convert the observation grid into spike trains, summed over the evaluation episode.
+Using the commonly cited 45-nm estimates of Horowitz \cite{horowitz2014computing}, a 32-bit floating-point MAC costs approximately $4.6\,\mathrm{pJ}$ and an accumulate (addition) costs approximately $0.9\,\mathrm{pJ}$. The reported efficiency metric is the ratio $E_{\mathrm{SNN}}/E_{\mathrm{ANN}}$, together with the operation counts used to obtain it.
 
-This model explicitly focuses on arithmetic processing and ignores memory-access costs, even though data movement between RAM and the processor typically consumes more energy than arithmetic. The final ratio $E_{\mathrm{SNN}}/E_{\mathrm{ANN}}$ is therefore the primary metric for the inference energy budget, accompanied by the operation counts and assumptions used to compute it.
+In the SNN, $N_{\mathrm{update}}$ is the total number of membrane updates, in which the potential is multiplied by the leak factor at every time step. Because this requires a multiplication, $E_{\mathrm{update}}$ is conservatively treated as equal to a MAC ($4.6\,\mathrm{pJ}$), which avoids underestimating the SNN cost. Because the SNN processes spikes instead of raw pixel values, the operations needed to convert the observation grid into spike trains over the internal time steps are counted separately as $E_{\mathrm{encoding}}$, summed over the evaluation episode.
 
+The model covers arithmetic only and ignores memory-access costs, even though moving data between memory and the processor typically consumes more energy than arithmetic. The ratio $E_{\mathrm{SNN}}/E_{\mathrm{ANN}}$ should therefore be read as a comparative estimate under explicit assumptions, not as a prediction of power consumption on a specific device.
 
-
-\section{Synaptic Plasticity and Biological Reinforcement Learning}
+\section{Synaptic Plasticity and Reward-Modulated Learning}
 
 \subsection{Spike-Timing-Dependent Plasticity (STDP)}
 
-Most of the conventional AI architectures discussed previously rely on continuous activation functions and smooth, differentiable curves, therefore, the standard method for training these Artificial Neural Networks (ANNs) is Backpropagation. Because Backpropagation calculates gradients using loss and error functions, it strictly requires continuous values. In contrast, the Spiking-NEAT approach utilizes non-differentiable, discrete binary signals (spikes). Consequently, traditional gradient-descent methods cannot be applied. Furthermore, relying solely on NEAT's random weight mutations between evolutionary generations is computationally slow and inefficient. Therefore, this project proposes an alternative, biologically plausible solution to dynamically evolve the synaptic weights while the agent interacts with the environment.
+The conventional architectures discussed so far rely on continuous activation functions and are trained by backpropagation, which computes gradients of a loss function and therefore requires continuous values. The Spiking-NEAT approach uses binary spikes, so gradient descent cannot be applied directly. Relying only on NEAT's random weight mutations between generations is a slow way to tune weights. This project therefore proposes a biologically inspired alternative that adapts the synaptic weights while the agent interacts with the environment.
 
-In biological brains, learning is driven by synaptic plasticity, which refers to the ability of neural connections to strengthen or weaken over time based on their activity. This correlates with the Hebbian postulate: ``Neurons that fire together, wire together.'' This rule states that if neuron A repeatedly and persistently takes part in firing neuron B, the synaptic efficacy from A to B increases \cite{hebb1949,gerstner2014}. These principles are mathematically formalized in Spike-Timing-Dependent Plasticity (STDP). In STDP, the change in synaptic weight depends heavily on the precise timing of spikes. Generally, if a pre-synaptic neuron fires just before a post-synaptic neuron, the connection between them is strengthened, a process known as Long-Term Potentiation (LTP). Conversely, if the pre-synaptic neuron fires just after the post-synaptic neuron, the connection is weakened, resulting in Long-Term Depression (LTD).
+In biological brains, learning is associated with synaptic plasticity, the ability of connections between neurons to strengthen or weaken depending on their activity. This idea goes back to the Hebbian postulate: if neuron A repeatedly and persistently takes part in firing neuron B, the efficacy of the synapse from A to B increases \cite{hebb1949,gerstner2014}. It is often summarised as ``neurons that fire together wire together''. Spike-Timing-Dependent Plasticity (STDP) is a formalisation in which the weight change depends on the precise timing of spikes. If a presynaptic neuron fires shortly before a postsynaptic neuron, the connection is strengthened (Long-Term Potentiation, LTP); if it fires shortly after, the connection is weakened (Long-Term Depression, LTD).
 
 For a spike-time difference $s=t_{\mathrm{post}}-t_{\mathrm{pre}}$, a standard pair-based STDP learning window is
 
@@ -201,16 +188,16 @@ W(s) =
 \end{cases}
 \end{equation}
 
-where $A_{+}$ and $A_{-}$ control potentiation and depression, while $\tau_{+}$ and $\tau_{-}$ determine their temporal ranges.
+where $A_{+}$ and $A_{-}$ control the amount of potentiation and depression, while $\tau_{+}$ and $\tau_{-}$ determine their temporal ranges. In R-STDP (next section), this window defines the pre-post contribution $F_{ij}(t)$ that feeds the eligibility trace.
 
-However, standard STDP is strictly unsupervised, it evaluates only the relative timing of spikes, lacking any mechanism to determine whether the resulting action was beneficial or detrimental to the system. Consequently, if a negative action occurs repeatedly, STDP will continually strengthen the synaptic pathways responsible for that action simply because the neurons fire in sequence. Without a goal-oriented mechanism, standard STDP can reinforce maladaptive behaviors, ultimately hindering the agent's progression in dynamic environments.
+Standard STDP is unsupervised: it considers only the relative timing of spikes and has no information about whether the resulting behaviour was good or bad for the agent. Consequently, if a harmful action is repeated, STDP can keep strengthening the pathways that produce it simply because the neurons fire in sequence. Without a goal-related signal, STDP alone can therefore reinforce unhelpful behaviour.
 
 \subsection{Reward-Modulated STDP (R-STDP)}
 \label{sec:rstdp}
 
-To resolve this credit assignment problem, Reward-Modulated STDP (R-STDP) is introduced \cite{mozafari2018,izhikevich2007,florian2007,legenstein2008,fremaux2016}. R-STDP integrates the principles of Reinforcement Learning by expanding standard STDP into a three-factor learning rule. The three key factors are: the pre-synaptic spike, the post-synaptic spike, and a delayed neuromodulatory signal, which mathematically mimics the release of dopamine in biological brains. In this model, when neurons fire sequentially, STDP initially marks the connection with a temporary ``eligibility trace.'' If the agent subsequently performs a beneficial action and receives an environmental reward (a dopamine boost) shortly after, this trace is converted into a permanent weight increase (LTP). Conversely, if the agent receives a punishment or no reward, the connection is actively weakened (LTD) \cite{mozafari2018}. Consequently, R-STDP not only evolves the network weights dynamically but also ensures that learning is goal-directed and efficient.
+Reward-modulated STDP (R-STDP) addresses this limitation by adding a reward signal \cite{mozafari2018,izhikevich2007,florian2007,legenstein2008,fremaux2016}. It addresses the \emph{distal reward problem}: a reward usually arrives some time after the spikes that caused it, so the network must remember which synapses were recently active. R-STDP expands standard STDP into a three-factor learning rule, whose factors are the presynaptic activity, the postsynaptic activity and a global neuromodulatory signal that plays a role similar to dopamine in biological brains. When a presynaptic and a postsynaptic spike occur in sequence, STDP does not change the weight immediately: it updates a temporary \emph{eligibility trace} on that synapse. The weight changes only when the neuromodulatory signal arrives, in proportion to the trace. If the agent receives more reward than expected, the traced synapses are strengthened; if it receives less than expected, they are weakened \cite{mozafari2018}. In this way, the learning is guided by the outcome of the agent's behaviour and not only by spike timing.
 
-The eligibility trace and reward-modulated weight update can be expressed as
+The eligibility trace and the reward-modulated weight update can be expressed as
 
 \begin{equation}
     \frac{de_{ij}(t)}{dt} = -\frac{e_{ij}(t)}{\tau_e} + F_{ij}(t),
@@ -218,14 +205,12 @@ The eligibility trace and reward-modulated weight update can be expressed as
     \frac{dw_{ij}(t)}{dt} = d(t)e_{ij}(t),
 \end{equation}
 
-where $F_{ij}(t)$ is the instantaneous pre-post STDP contribution, $\tau_e$ is the trace time constant, and
+where $F_{ij}(t)$ is the instantaneous pre-post STDP contribution of the synapse from neuron $j$ to neuron $i$, $\tau_e$ is the trace time constant, and
 
 \begin{equation}
     d(t) = R(t)-\langle R\rangle
 \end{equation}
 
-is the neuromodulatory prediction error. Positive values strengthen tagged synapses, while negative values weaken them.
+is the neuromodulatory reward-prediction error, that is, the difference between the current reward $R(t)$ and its running average $\langle R\rangle$. Positive values strengthen tagged synapses, and negative values weaken them.
 
-In conclusion, this triad forms the complete theoretical foundation of the proposed model: NEAT acts as the architect to build the minimal network topology, LIF neurons serve as the highly energy-efficient processing engine using discrete spikes, and R-STDP functions as the biological reinforcement learning mechanism, adjusting synaptic weights dynamically based on behavioral success rather than isolated timing.
-
-
+In summary, the proposed model combines three components: NEAT acts as the architect that builds the network topology starting from minimal structures; LIF neurons are the processing engine, which uses binary spikes and can reduce the number of costly operations; and R-STDP is the teacher, a reward-driven local rule that adapts the synaptic weights during play according to behavioural success and not only spike timing.

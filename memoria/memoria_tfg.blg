@@ -6,7 +6,8 @@ A level-1 auxiliary file: portada/resumo.aux
 A level-1 auxiliary file: contido/introducion.aux
 A level-1 auxiliary file: contido/background.aux
 A level-1 auxiliary file: contido/state_art.aux
-A level-1 auxiliary file: contido/conclusions.aux
+A level-1 auxiliary file: contido/design.aux
+A level-1 auxiliary file: contido/experiment.aux
 The style file: IEEEtranN.bst
 Reallocated singl_function (elt_size=4) to 100 items from 50.
 Reallocated singl_function (elt_size=4) to 100 items from 50.
@@ -16,13 +17,6 @@ Reallocated singl_function (elt_size=4) to 100 items from 50.
 Database file #1: bibliografia/bibconf-en.bib
 Database file #2: bibliografia/bibliografia.bib
 Warning--I didn't find a database entry for "IEEEexample:BSTcontrol"
-Warning--I didn't find a database entry for "mnih2015dqn"
-Warning--I didn't find a database entry for "stanley2002neat"
-Warning--I didn't find a database entry for "hunter2026sansac"
-Warning--I didn't find a database entry for "pan2023brain"
-Warning--I didn't find a database entry for "mozafari2018rstdp"
-Warning--I didn't find a database entry for "horowitz2014"
-Warning--I didn't find a database entry for "medvedeva2025"
 -- IEEEtranN.bst version 1.14 (2015/08/26) by Michael Shell.
 -- http://www.michaelshell.org/tex/ieeetran/bibtex/
 -- See the "IEEEtran_bst_HOWTO.pdf" manual for usage information.
@@ -32,45 +26,45 @@ Reallocated global_strs (elt_size=200001) to 20 items from 10.
 Reallocated glb_str_end (elt_size=4) to 20 items from 10.
 
 Done.
-You've used 34 entries,
+You've used 38 entries,
             4855 wiz_defined-function locations,
-            1153 strings with 15294 characters,
-and the built_in function-call counts, 31911 in all, are:
-= -- 2805
-> -- 1090
-< -- 226
-+ -- 527
-- -- 252
-* -- 1824
-:= -- 4824
-add.period$ -- 70
-call.type$ -- 34
-change.case$ -- 68
-chr.to.int$ -- 499
-cite$ -- 34
-duplicate$ -- 2094
-empty$ -- 2182
-format.name$ -- 321
-if$ -- 7196
+            1173 strings with 16209 characters,
+and the built_in function-call counts, 35194 in all, are:
+= -- 3102
+> -- 1224
+< -- 237
++ -- 588
+- -- 286
+* -- 2023
+:= -- 5361
+add.period$ -- 78
+call.type$ -- 38
+change.case$ -- 78
+chr.to.int$ -- 527
+cite$ -- 38
+duplicate$ -- 2314
+empty$ -- 2400
+format.name$ -- 363
+if$ -- 7919
 int.to.chr$ -- 1
-int.to.str$ -- 35
-missing$ -- 347
-newline$ -- 126
-num.names$ -- 102
-pop$ -- 865
+int.to.str$ -- 39
+missing$ -- 387
+newline$ -- 138
+num.names$ -- 114
+pop$ -- 968
 preamble$ -- 1
-purify$ -- 34
+purify$ -- 38
 quote$ -- 2
-skip$ -- 2353
+skip$ -- 2583
 stack$ -- 0
-substring$ -- 1230
-swap$ -- 1606
-text.length$ -- 60
+substring$ -- 1302
+swap$ -- 1756
+text.length$ -- 63
 text.prefix$ -- 0
 top$ -- 6
-type$ -- 523
+type$ -- 586
 warning$ -- 0
-while$ -- 152
+while$ -- 164
 width$ -- 0
-write$ -- 422
-(There were 8 warnings)
+write$ -- 470
+(There was 1 warning)
