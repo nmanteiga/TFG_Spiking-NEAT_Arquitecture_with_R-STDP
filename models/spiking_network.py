@@ -29,9 +29,16 @@ class SpikingNetwork:
                 weight = connection_gene.weight
                 self.connections.append((in_node, out_node, weight))
 
-        # to measure the energy efficiency
+        # to measure the energy efficiency (read by energy_model.snn_energy)
         self.total_spikes = 0
         self.synaptic_operations = 0
+        self.neuron_updates = 0         # one membrane update (leak) per neuron per frame
+        self.input_spikes = 0           # active input pixels, to report how sparse the input really is
+        self.frames = 0
+        self.plasticity_updates = 0     # reserved for R-STDP (eligibility trace / weight updates)
+        self.n_neurons = len(self.neurons)
+        self.n_connections = len(self.connections)
+        self.n_inputs = len(self.input_keys)
 
 
 
@@ -43,6 +50,10 @@ class SpikingNetwork:
         current_spikes = {node_id: val for node_id, val in zip(self.input_keys, inputs)}
         # adds the info to the previous spikes list
         current_spikes.update(self.last_spikes)
+
+        self.frames += 1
+        self.input_spikes += sum(1 for v in inputs if v > 0.0)
+        self.neuron_updates += len(self.neurons)
 
         # preparing the accumulator
         incoming_currents = {}

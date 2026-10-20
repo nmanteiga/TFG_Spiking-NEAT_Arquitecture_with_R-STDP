@@ -1,25 +1,31 @@
 #!/bin/bash
 
-echo "Starting Spiking Batch 1..."
-python3 -u train_spiking.py 101 > logs/spiking_seed_101.txt 2>&1 &
-sleep 2 
-python3 -u train_spiking.py 102 > logs/spiking_seed_102.txt 2>&1 &
-sleep 2
-python3 -u train_spiking.py 103 > logs/spiking_seed_103.txt 2>&1 &
-sleep 2
-python3 -u train_spiking.py 104 > logs/spiking_seed_104.txt 2>&1 &
-sleep 2
-python3 -u train_spiking.py 105 > logs/spiking_seed_105.txt 2>&1 &
+SNN_SEEDS="101 102 103 104 105"
+ANN_SEEDS="201 202 203 204 205"
 
-echo "Starting Baseline Batch 1..."
-python3 -u train_baseline.py 201 > logs/baseline_seed_201.txt 2>&1 &
-sleep 2
-python3 -u train_baseline.py 202 > logs/baseline_seed_202.txt 2>&1 &
-sleep 2
-python3 -u train_baseline.py 203 > logs/baseline_seed_203.txt 2>&1 &
-sleep 2
-python3 -u train_baseline.py 204 > logs/baseline_seed_204.txt 2>&1 &
-sleep 2
-python3 -u train_baseline.py 205 > logs/baseline_seed_205.txt 2>&1 &
+cd "$(dirname "$0")" || exit 1
+mkdir -p logs
 
-echo "All 10 tests are running in the background"
+run_one() {
+    local script=$1 name=$2 seed=$3
+    local log="logs/${name}_seed_${seed}.txt"
+    echo "$(date '+%F %T')  start  $name seed $seed"
+    if python3 -u "$script" "$seed" > "$log" 2>&1; then
+        echo "$(date '+%F %T')  done   $name seed $seed"
+    else
+        echo "$(date '+%F %T')  FAILED $name seed $seed (see $log)"
+    fi
+}
+
+echo "$(date '+%F %T')  batch started on $(hostname) with $(python3 --version)"
+
+for seed in $SNN_SEEDS; do
+    run_one train_spiking.py spiking "$seed" &
+    sleep 2
+done
+for seed in $ANN_SEEDS; do
+    run_one train_baseline.py baseline "$seed" &
+    sleep 2
+done
+
+wait

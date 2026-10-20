@@ -7,6 +7,7 @@ import numpy as np
 import cv2
 import pickle
 import random
+from preprocessing_module import preprocess_state
 
 # config
 SEED_TO_REPLAY = 202
@@ -36,15 +37,8 @@ random.seed(SEED_TO_REPLAY)
 np.random.seed(SEED_TO_REPLAY)
 
 # rgb_array to prevent macos window frame drops
-env = gym_super_mario_bros.make('SuperMarioBros-1-2-v0', render_mode='rgb_array')
+env = gym_super_mario_bros.make('SuperMarioBros-1-1-v0', render_mode='rgb_array')
 env = JoypadSpace(env, COMPLEX_MOVEMENT)
-
-def preprocess_state(state):
-    # MUST perfectly match the binary logic from training
-    gray = cv2.cvtColor(state, cv2.COLOR_RGB2GRAY)
-    resized = cv2.resize(gray, (13, 13))
-    flattened = resized.flatten() / 255.0
-    return np.where(flattened > 0.5, 1.0, 0.0)
 
 def replay_winner(config_path, winner_path):
     with open(winner_path, "rb") as f:

@@ -4,37 +4,28 @@ from gym_super_mario_bros.actions import COMPLEX_MOVEMENT
 import os
 import neat
 import numpy as np
-import cv2          # to shrink the screen
 import pickle
 import datetime  
 import sys
 import random
+import csv, json, time
+from codecarbon import OfflineEmissionsTracker
 
+# import the preprocessing module 
+from preprocessing_module import preprocess_state
 
 # import the spiking neural network
 from models.spiking_network import SpikingNetwork  
 
+MAX_GENERATIONS = 300     
+KIND = "snn"
 
 # this is only so mac does not crash 
 # env = gym_super_mario_bros.make('SuperMarioBros-v0', render_mode='human') # so it renders the machine playing
 env = gym_super_mario_bros.make('SuperMarioBros-1-1-v0')
 env = JoypadSpace(env, COMPLEX_MOVEMENT)
 
-def preprocess_state(state):
-    # grayscale
-    gray = cv2.cvtColor(state, cv2.COLOR_RGB2GRAY)
-    # 13x13 grid
-    resized = cv2.resize(gray, (13, 13))
-    # flatten it into a 1D array of 169 numbers and normalize (0 to 1)
-    flattened = resized.flatten() / 255.0
-    return np.where(flattened > 0.5, 1.0, 0.0)  # if it's bright, spike, otherwise, 0.
-
-
-total_training_energy_pj = 0.0
-
 def eval_genomes(genomes, config):
-    global total_training_energy_pj
-
     # loop through every genome in the population 
     for genome_id, genome in genomes:
         # create the Recurrent Neural Network for this specific genome
@@ -77,45 +68,63 @@ def eval_genomes(genomes, config):
                 done = True 
             # env.render()
 
+    
         genome.frames = frame_counter
-        genome.synops = net.synaptic_operations
-        genome.spikes = net.total_spikes
-        genome.energy_pj = net.synaptic_operations * 0.9
-        total_training_energy_pj += genome.energy_pj
 
     best = max(genomes, key=lambda x: x[1].fitness)[1]
-    print(f"Gen Best -> Fitness: {best.fitness:.1f} | Best Run Energy: {best.energy_pj:.2f} pJ | Total Training Energy So Far: {total_training_energy_pj / 1e6:.2f} µJ")
+    print(f"Gen Best -> Fitness: {best.fitness:.1f} | Frames: {best.frames}")
+
+
+def read_codecarbon(log_dir):
+    """Last row of the emissions.csv that CodeCarbon writes into log_dir -> (kWh, kg CO2eq)."""
+    path = os.path.join(log_dir, "emissions.csv")
+    if not os.path.exists(path):
+        return None, None
+    with open(path, newline="") as f:
+        rows = list(csv.DictReader(f))
+    if not rows:
+        return None, None
+    return float(rows[-1]["energy_consumed"]), float(rows[-1]["emissions"])
 
 
 def run(config_path, seed_value):
-    config = neat.config.Config(neat.DefaultGenome, neat.DefaultReproduction, 
-                                neat.DefaultSpeciesSet, neat.DefaultStagnation, 
-                                config_path)
+    config = neat.config.Config(neat.DefaultGenome, neat.DefaultReproduction,
+                                neat.DefaultSpeciesSet, neat.DefaultStagnation, config_path)
     population = neat.Population(config)
 
-    # to save the results on logs
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     log_dir = os.path.join(local_dir, "logs", f"seed_{seed_value}_{timestamp}")
     os.makedirs(log_dir, exist_ok=True)
 
-    with open(os.path.join(log_dir, ".keep"), "w") as f:
-        f.write("do not delete")
-
     population.add_reporter(neat.StdOutReporter(True))
-    stats = neat.StatisticsReporter()
-    population.add_reporter(stats)
+    population.add_reporter(neat.StatisticsReporter())
+    population.add_reporter(neat.Checkpointer(10, filename_prefix=os.path.join(log_dir, "neat-checkpoint-")))
 
-    checkpoint_prefix = os.path.join(log_dir, "neat-checkpoint-")
-    population.add_reporter(neat.Checkpointer(10, filename_prefix=checkpoint_prefix))
-    print(f"Training started. Logs and backups saving to: {log_dir}")
-    #winner = population.run(eval_genomes, 150)
-    winner = population.run(eval_genomes, None)
+    # CodeCarbon footprint of the TRAINING run: measured via RAPL if readable, otherwise estimated from CPU load.
+    # tracking_mode="process" only counts this run in load mode; RAPL always reports the whole CPU package
+    tracker = OfflineEmissionsTracker(country_iso_code="ESP", project_name=f"{KIND}_seed_{seed_value}",
+                                      output_dir=log_dir, measure_power_secs=5, log_level="warning",
+                                      tracking_mode="process")
+    t0, cpu0 = time.time(), time.process_time()
+    tracker.start()
+    try:
+        winner = population.run(eval_genomes, MAX_GENERATIONS)
+    finally:
+        tracker.stop() 
+    train_seconds = time.time() - t0
+    cpu_seconds = time.process_time() - cpu0      # to split a shared RAPL reading between parallel runs
 
-    winner_path = os.path.join(log_dir, "winner.pkl")
-    with open(winner_path, "wb") as f:
+    with open(os.path.join(log_dir, "winner.pkl"), "wb") as f:
         pickle.dump(winner, f)
-        
-    print(f"Training complete. Best genome saved to {winner_path}.")
+
+    kwh, kg = read_codecarbon(log_dir)
+    summary = {"kind": KIND, "seed": seed_value, "generations": population.generation,
+               "solved": bool(winner.fitness >= config.fitness_threshold),
+               "train_seconds": train_seconds, "cpu_seconds": cpu_seconds,
+               "training_kwh": kwh, "training_kg_co2eq": kg}
+    with open(os.path.join(log_dir, "run_summary.json"), "w") as f:
+        json.dump(summary, f, indent=2)
+    print("Run summary:", summary)
     env.close()
 
 

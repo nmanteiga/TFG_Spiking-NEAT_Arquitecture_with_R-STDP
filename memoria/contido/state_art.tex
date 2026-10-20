@@ -20,7 +20,7 @@ The computational cost is paid mostly during training, but the resulting control
 Evolutionary methods optimise a population of controllers using only episode-level fitness, so they need neither gradients nor labelled data.
 Hausknecht et al.~\cite{hausknecht2014atari} compared four neuroevolution algorithms, among them NEAT and HyperNEAT, on 61~Atari games with different state representations.
 They found that direct encodings such as NEAT worked best with compact state representations, whereas the indirect encoding of HyperNEAT scaled to the raw screen.
-Later work showed that simple genetic algorithms and evolution strategies can be competitive with gradient-based deep reinforcement learning for networks with millions of parameters~\cite{such2017deepne,salimans2017es}, and Stanley et al.~\cite{stanley2019designing} review the field.
+Later work showed that simple genetic algorithms”, since evolution strategies was Salimans can be competitive with gradient-based deep reinforcement learning for networks with millions of parameters, and Stanley et al.~\cite{stanley2019designing} review the field.
 
 NEAT~\cite{stanley2002} is the best-known method that evolves network structure together with weights, starting from minimal networks (Chapter~\ref{ch:background}).
 Its application to Super Mario World in the MarI/O demonstration~\cite{sethbling2015mario} motivated this project.
@@ -33,7 +33,7 @@ To summarize, the controllers above are conventional continuous-valued networks 
 \label{sec:sota-snn-control}
 
 \paragraph{Gradient-based training.}
-Spikes are not differentiable, but spiking networks can still be trained with backpropagation-style methods through surrogate gradients~\cite{neftci2019surrogate}, and recurrent spiking networks can be trained with local approximations of backpropagation through time such as e-prop~\cite{bellec2020eprop}.
+Spikes are not differentiable, but spiking networks can still be trained with backpropagation-style methods through surrogate gradients~\cite{neftci2019surrogate}.
 In control, these ideas have been combined with deep reinforcement learning.
 PopSAN trains a population-coded spiking actor together with a deep critic and was deployed on Intel's Loihi chip; on continuous-control tasks it matched deep actor networks trained with the same algorithms, and the authors report roughly 140 times less energy per inference than a deep actor on a Jetson TX2 for HalfCheetah~\cite{tang2021popsan}.
 SANSAC replaces the actor of Soft Actor-Critic with a spiking network, keeps standard critics, and reports near-equivalent performance to the conventional actor on a continuous-control benchmark, all on standard hardware and without an energy measurement~\cite{tang2026spiking}.
@@ -64,7 +64,6 @@ Evolving the structure while using R-STDP only for within-episode adaptation, as
 \label{sec:sota-epann}
 
 Evolving the learning process, and not only the weights, has a long history.
-Early work in evolutionary robotics evolved the mechanisms by which a controller self-organises, instead of evolving fixed parameters directly~\cite{floreano2000}.
 Soltoggio et al.\ evolved modulatory topologies, that is, networks that decide where neuromodulatory signals are routed, and showed that they outperform fixed-weight and Hebbian networks in a simulated-bee, reinforcement-learning-like task~\cite{soltoggio2007}.
 Later work studied the evolutionary advantages of neuromodulated plasticity in dynamic, reward-based scenarios~\cite{soltoggio2008}, and the field has been surveyed under the name Evolved Plastic Artificial Neural Networks (EPANNs)~\cite{soltoggio2018born}.
 
@@ -81,8 +80,7 @@ Their tasks are small (XOR, cart-pole, foraging in simple worlds), their inputs 
 
 Green~AI~\cite{schwartz2020green} argues that computational cost should be reported alongside accuracy.
 At the hardware level, the energy of an operation depends strongly on its type: in the widely cited 45-nm estimates of Horowitz~\cite{horowitz2014computing}, a 32-bit floating-point multiply-accumulate costs several times more than an accumulate, and memory access costs more than arithmetic.
-Neuromorphic processors such as Loihi~\cite{davies2018loihi} implement event-driven spiking computation with on-chip learning; Davies et al.~\cite{davies2021} survey results obtained on this platform and Schuman et al.~\cite{schuman2022} discuss opportunities and open problems for neuromorphic algorithms.
-Control-theoretic foundations for neuromorphic controllers are still being developed~\cite{foehr2025}.
+Neuromorphic processors such as Loihi~\cite{davies2018loihi} implement event-driven spiking computation with on-chip learning; Davies et al.~\cite{davies2021} survey results obtained on this platform.
 
 Energy claims for spiking networks are of two kinds: measurements on neuromorphic hardware, as in the PopSAN work above, and operation-count models evaluated on conventional hardware.
 The second kind is easy to apply, and it is the approach adopted in this project (Section~\ref{sec:energy-estimation}), but it ignores memory and communication costs.
