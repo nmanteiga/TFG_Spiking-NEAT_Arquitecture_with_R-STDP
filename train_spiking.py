@@ -17,7 +17,7 @@ from preprocessing_module import preprocess_state
 # import the spiking neural network
 from models.spiking_network import SpikingNetwork  
 
-MAX_GENERATIONS = 300     
+MAX_GENERATIONS = 1500    
 KIND = "snn"
 
 # this is only so mac does not crash 

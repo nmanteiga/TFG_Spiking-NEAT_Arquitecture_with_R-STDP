@@ -14,7 +14,7 @@ from codecarbon import OfflineEmissionsTracker
 # import the preprocessing module 
 from preprocessing_module import preprocess_state
 
-MAX_GENERATIONS = 300     
+MAX_GENERATIONS = 1500    
 KIND = "ann"
 
 # this is only so mac does not crash 
