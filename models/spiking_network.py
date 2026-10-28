@@ -53,7 +53,9 @@ class SpikingNetwork:
         self.potential_outputs = [0.0] * len(self.output_keys)   # one membrane potential per output (button)
 
         # ---------------------------------- R-STDP ----------------------------------
-        self.plastic = plastic
+        # a learning rate of 0 (evolution can choose it) means no weight can ever change: then traces and eligibility
+        # would be wasted work (and wasted energy), so the network behaves exactly as a non-plastic one
+        self.plastic = plastic and learning_rate > 0.0
         if self.plastic:
             self.learning_rate = learning_rate          # how big each weight change is (step 4: evolved per genome)
             self.trace_decay = trace_decay              # traces fade x0.8 per frame  -> remember ~5 frames
