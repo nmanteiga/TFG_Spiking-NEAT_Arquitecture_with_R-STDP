@@ -1,0 +1,56 @@
+{
+  "kind": "ann",
+  "seed": 204,
+  "level": "1-2",
+  "completed": false,
+  "max_x": 198,
+  "frames": 74,
+  "n_nodes": 17,
+  "n_connections": 22,
+  "fitness_in_training": 103067.0,
+  "energy": {
+    "default": {
+      "mac_pj": 7488.800000000001,
+      "bias_pj": 1132.2,
+      "act_pj": 0.0,
+      "total_pj": 8621.000000000002
+    },
+    "act5": {
+      "mac_pj": 7488.800000000001,
+      "bias_pj": 1132.2,
+      "act_pj": 28934.000000000004,
+      "total_pj": 37555.00000000001
+    },
+    "act10": {
+      "mac_pj": 7488.800000000001,
+      "bias_pj": 1132.2,
+      "act_pj": 57868.00000000001,
+      "total_pj": 66489.00000000001
+    },
+    "ann_binary_aware": {
+      "mac_pj": 2560.4,
+      "bias_pj": 1132.2,
+      "act_pj": 0.0,
+      "total_pj": 3692.6000000000004
+    },
+    "encoding_not_shared": {
+      "mac_pj": 7488.800000000001,
+      "bias_pj": 1132.2,
+      "act_pj": 0.0,
+      "total_pj": 8621.000000000002
+    }
+  },
+  "energy_per_frame_pj": {
+    "default": 116.50000000000003,
+    "act5": 507.5000000000001,
+    "act10": 898.5000000000002,
+    "ann_binary_aware": 49.900000000000006,
+    "encoding_not_shared": 116.50000000000003
+  },
+  "generations": 963,
+  "solved": true,
+  "train_seconds": 191709.74211382866,
+  "cpu_seconds": 193267.335231607,
+  "training_kwh": 2.164677736740907,
+  "training_kg_co2eq": 0.37676216007975505
+}

@@ -1,0 +1,56 @@
+{
+  "kind": "ann",
+  "seed": 205,
+  "level": "1-2",
+  "completed": false,
+  "max_x": 198,
+  "frames": 74,
+  "n_nodes": 16,
+  "n_connections": 26,
+  "fitness_in_training": 2730.0,
+  "energy": {
+    "default": {
+      "mac_pj": 8850.400000000001,
+      "bias_pj": 1065.6000000000001,
+      "act_pj": 0.0,
+      "total_pj": 9916.000000000002
+    },
+    "act5": {
+      "mac_pj": 8850.400000000001,
+      "bias_pj": 1065.6000000000001,
+      "act_pj": 27232.000000000004,
+      "total_pj": 37148.00000000001
+    },
+    "act10": {
+      "mac_pj": 8850.400000000001,
+      "bias_pj": 1065.6000000000001,
+      "act_pj": 54464.00000000001,
+      "total_pj": 64380.00000000001
+    },
+    "ann_binary_aware": {
+      "mac_pj": 2826.8,
+      "bias_pj": 1065.6000000000001,
+      "act_pj": 0.0,
+      "total_pj": 3892.4000000000005
+    },
+    "encoding_not_shared": {
+      "mac_pj": 8850.400000000001,
+      "bias_pj": 1065.6000000000001,
+      "act_pj": 0.0,
+      "total_pj": 9916.000000000002
+    }
+  },
+  "energy_per_frame_pj": {
+    "default": 134.00000000000003,
+    "act5": 502.0000000000001,
+    "act10": 870.0000000000001,
+    "ann_binary_aware": 52.60000000000001,
+    "encoding_not_shared": 134.00000000000003
+  },
+  "generations": 1500,
+  "solved": false,
+  "train_seconds": 393072.4238770008,
+  "cpu_seconds": 396242.08874242497,
+  "training_kwh": 6.936519745482491,
+  "training_kg_co2eq": 1.2073012617012284
+}

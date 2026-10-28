@@ -3,6 +3,7 @@ eval.py -- replays the winner of one training run and writes results/<kind>_seed
 
     python3 eval.py <snn|ann> <seed> <run folder> [level]
     python3 eval.py snn 101 logs/seed_101_2026-10-20_12-00-00
+    python3 eval.py snn 101 logs/seed_101_2026-10-20_12-00-00 1-2     # transfer -> results/level_1-2/
 """
 import json, os, pickle, sys
 import neat
@@ -80,8 +81,10 @@ def main(kind, seed, log_dir, level="1-1"):
         with open(summary) as f:
             res.update({k: v for k, v in json.load(f).items() if k not in res})
 
-    os.makedirs(os.path.join(HERE, "results"), exist_ok=True)
-    out = os.path.join(HERE, "results", f"{kind}_seed_{seed}.json")
+    # 1-1 (training level) -> results/, any other level (transfer) -> results/level_<level>/
+    res_dir = os.path.join(HERE, "results") if level == "1-1" else os.path.join(HERE, "results", f"level_{level}")
+    os.makedirs(res_dir, exist_ok=True)
+    out = os.path.join(res_dir, f"{kind}_seed_{seed}.json")
     with open(out, "w") as f:
         json.dump(res, f, indent=2)
     print(f"{kind} seed {seed}: completed={completed} max_x={max_x} frames={frames} "

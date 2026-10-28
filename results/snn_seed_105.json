@@ -1,0 +1,72 @@
+{
+  "kind": "snn",
+  "seed": 105,
+  "level": "1-1",
+  "completed": true,
+  "max_x": 3161,
+  "frames": 2120,
+  "n_nodes": 15,
+  "n_connections": 15,
+  "fitness_in_training": 103040.0,
+  "synops": 10804,
+  "spikes": 4698,
+  "neuron_updates": 31800,
+  "input_spikes": 109934,
+  "plasticity_updates": 0,
+  "input_density": 0.3068382270849615,
+  "energy": {
+    "default": {
+      "synop_pj": 9723.6,
+      "update_pj": 146280.00000000003,
+      "encoding_pj": 0.0,
+      "plasticity_pj": 0.0,
+      "shared_preproc_pj": 322452.0,
+      "total_pj": 156003.60000000003
+    },
+    "act5": {
+      "synop_pj": 9723.6,
+      "update_pj": 146280.00000000003,
+      "encoding_pj": 0.0,
+      "plasticity_pj": 0.0,
+      "shared_preproc_pj": 322452.0,
+      "total_pj": 156003.60000000003
+    },
+    "act10": {
+      "synop_pj": 9723.6,
+      "update_pj": 146280.00000000003,
+      "encoding_pj": 0.0,
+      "plasticity_pj": 0.0,
+      "shared_preproc_pj": 322452.0,
+      "total_pj": 156003.60000000003
+    },
+    "ann_binary_aware": {
+      "synop_pj": 9723.6,
+      "update_pj": 146280.00000000003,
+      "encoding_pj": 0.0,
+      "plasticity_pj": 0.0,
+      "shared_preproc_pj": 322452.0,
+      "total_pj": 156003.60000000003
+    },
+    "encoding_not_shared": {
+      "synop_pj": 9723.6,
+      "update_pj": 146280.00000000003,
+      "encoding_pj": 322452.0,
+      "plasticity_pj": 0.0,
+      "shared_preproc_pj": 322452.0,
+      "total_pj": 478455.60000000003
+    }
+  },
+  "energy_per_frame_pj": {
+    "default": 73.58660377358493,
+    "act5": 73.58660377358493,
+    "act10": 73.58660377358493,
+    "ann_binary_aware": 73.58660377358493,
+    "encoding_not_shared": 225.68660377358492
+  },
+  "generations": 999,
+  "solved": true,
+  "train_seconds": 241633.4164738655,
+  "cpu_seconds": 243657.905447233,
+  "training_kwh": 3.8305869478168026,
+  "training_kg_co2eq": 0.6667136582675142
+}

@@ -1,9 +1,11 @@
-import csv, glob, json, os
+import csv, glob, json, os, sys
 import numpy as np
 from scipy.stats import mannwhitneyu
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-RES = os.path.join(HERE, "results")
+# python3 stats.py -> level 1-1 (results/);  python3 stats.py 1-2 -> transfer results (results/level_1-2/)
+LEVEL = sys.argv[1] if len(sys.argv) > 1 else "1-1"
+RES = os.path.join(HERE, "results") if LEVEL == "1-1" else os.path.join(HERE, "results", f"level_{LEVEL}")
 GROUPS = {"snn": "Spiking NEAT (SNN)", "ann": "Standard NEAT (ANN)"}
 ENERGY_VARIANT = "default"
 ALPHA = 0.05
@@ -57,7 +59,7 @@ METRICS = {   # name: (getter, unit)
     "energy / frame":            (lambda r: r["energy_per_frame_pj"][ENERGY_VARIANT], "pJ"),
     "energy / episode":          (lambda r: r["energy"][ENERGY_VARIANT]["total_pj"], "pJ"),
     "connections":               (lambda r: r["n_connections"], ""),
-    "training energy (measured)": (lambda r: r.get("training_kwh"), "kWh"),
+    "training energy (estimated)": (lambda r: r.get("training_kwh"), "kWh"),
 }
 
 
