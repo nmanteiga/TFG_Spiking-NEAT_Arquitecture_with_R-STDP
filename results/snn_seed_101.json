@@ -1,67 +1,67 @@
 {
   "kind": "snn",
   "seed": 101,
-  "level": "1-2",
-  "completed": false,
-  "max_x": 354,
-  "frames": 438,
+  "level": "1-1",
+  "completed": true,
+  "max_x": 3161,
+  "frames": 1423,
   "n_nodes": 12,
   "n_connections": 3,
   "fitness_in_training": 103076.0,
-  "synops": 876,
-  "spikes": 477,
-  "neuron_updates": 5256,
-  "input_spikes": 25848,
+  "synops": 3242,
+  "spikes": 1522,
+  "neuron_updates": 17076,
+  "input_spikes": 72312,
   "plasticity_updates": 0,
-  "input_density": 0.34919348301856207,
+  "input_density": 0.30068985017901173,
   "energy": {
     "default": {
-      "synop_pj": 788.4,
-      "update_pj": 24177.600000000002,
+      "synop_pj": 2917.8,
+      "update_pj": 78549.6,
       "encoding_pj": 0.0,
       "plasticity_pj": 0.0,
-      "shared_preproc_pj": 66619.8,
-      "total_pj": 24966.000000000004
+      "shared_preproc_pj": 216438.30000000002,
+      "total_pj": 81467.40000000001
     },
     "act5": {
-      "synop_pj": 788.4,
-      "update_pj": 24177.600000000002,
+      "synop_pj": 2917.8,
+      "update_pj": 78549.6,
       "encoding_pj": 0.0,
       "plasticity_pj": 0.0,
-      "shared_preproc_pj": 66619.8,
-      "total_pj": 24966.000000000004
+      "shared_preproc_pj": 216438.30000000002,
+      "total_pj": 81467.40000000001
     },
     "act10": {
-      "synop_pj": 788.4,
-      "update_pj": 24177.600000000002,
+      "synop_pj": 2917.8,
+      "update_pj": 78549.6,
       "encoding_pj": 0.0,
       "plasticity_pj": 0.0,
-      "shared_preproc_pj": 66619.8,
-      "total_pj": 24966.000000000004
+      "shared_preproc_pj": 216438.30000000002,
+      "total_pj": 81467.40000000001
     },
     "ann_binary_aware": {
-      "synop_pj": 788.4,
-      "update_pj": 24177.600000000002,
+      "synop_pj": 2917.8,
+      "update_pj": 78549.6,
       "encoding_pj": 0.0,
       "plasticity_pj": 0.0,
-      "shared_preproc_pj": 66619.8,
-      "total_pj": 24966.000000000004
+      "shared_preproc_pj": 216438.30000000002,
+      "total_pj": 81467.40000000001
     },
     "encoding_not_shared": {
-      "synop_pj": 788.4,
-      "update_pj": 24177.600000000002,
-      "encoding_pj": 66619.8,
+      "synop_pj": 2917.8,
+      "update_pj": 78549.6,
+      "encoding_pj": 216438.30000000002,
       "plasticity_pj": 0.0,
-      "shared_preproc_pj": 66619.8,
-      "total_pj": 91585.8
+      "shared_preproc_pj": 216438.30000000002,
+      "total_pj": 297905.7
     }
   },
   "energy_per_frame_pj": {
-    "default": 57.00000000000001,
-    "act5": 57.00000000000001,
-    "act10": 57.00000000000001,
-    "ann_binary_aware": 57.00000000000001,
-    "encoding_not_shared": 209.1
+    "default": 57.25045678144765,
+    "act5": 57.25045678144765,
+    "act10": 57.25045678144765,
+    "ann_binary_aware": 57.25045678144765,
+    "encoding_not_shared": 209.35045678144766
   },
   "generations": 18,
   "solved": true,
