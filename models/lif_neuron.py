@@ -4,12 +4,14 @@ class LIFNeuron:
         self.resting_potential = 0.0
         self.threshold = threshold
         self.leak_factor = leak_factor
+        self.after_leak = 0.0
         
     def step(self, incoming_current):
         '''
         incomming_current:  float is the sum of all the spikes that arrived from other neurons during this frame, 
                             multiplied by their respective synaptic weights
         '''
+        
         # integrate
         self.membrane_potential += incoming_current
 
@@ -18,6 +20,7 @@ class LIFNeuron:
 
         # leak
         self.membrane_potential *= self.leak_factor
+        self.after_leak = self.membrane_potential # for the action choice ("most charged output")
 
         # fire
         if (self.membrane_potential >= self.threshold):

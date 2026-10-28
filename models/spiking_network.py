@@ -39,6 +39,7 @@ class SpikingNetwork:
         self.n_neurons = len(self.neurons)
         self.n_connections = len(self.connections)
         self.n_inputs = len(self.input_keys)
+        self.potential_outputs = 0.0
 
 
 
@@ -90,6 +91,8 @@ class SpikingNetwork:
 
         # extract outputs in the EXACT order defined by self.output_keys
         outputs = [new_spikes.get(key, 0.0) for key in self.output_keys]
+        # extract potentials in the EXACT order defined by self.output_keys
+        self.potential_outputs = [self.output_keys.get(key, 0.0) for key in self.output_keys]
 
         self.last_spikes = new_spikes
         return outputs
