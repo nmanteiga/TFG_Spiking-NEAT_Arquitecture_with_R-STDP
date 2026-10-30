@@ -80,6 +80,7 @@ class SpikingNetwork:
             self.output_set = set(self.output_keys)
             self.reward_average = 0.0                   # "expected reward" (running average)
             self.last_dopamine = 0.0                    # kept only to inspect / plot
+        # ----------------------------------------------------------------------------
 
 
     def activate(self, inputs):
@@ -158,6 +159,7 @@ class SpikingNetwork:
         return outputs
 
 
+    # ---------------------------------- R-STDP ----------------------------------
     def reward(self, game_reward, chosen_action):
         '''
         called by the training script after every env.step(), with the reward of that frame and the index of the
@@ -229,3 +231,5 @@ class SpikingNetwork:
                 value *= decay
                 traces[node_id] = value if value >= TINY else 0.0
                 self.trace_updates += 1
+
+    # ----------------------------------------------------------------------------

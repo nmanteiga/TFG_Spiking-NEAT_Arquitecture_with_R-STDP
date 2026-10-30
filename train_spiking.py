@@ -29,7 +29,7 @@ def eval_genomes(genomes, config):
     # loop through every genome in the population 
     for genome_id, genome in genomes:
         # create the Recurrent Neural Network for this specific genome
-        net = SpikingNetwork(genome, config)                    # spiking neat
+        net = SpikingNetwork(genome, config)  # spiking neat
 
         # reset the game and the fitness for this Mario
         state, info = env.reset()
