@@ -29,6 +29,9 @@ same as train_spiking.py, plus R-STDP. the differences:
     python3 train_rstdp.py 301                    -> "rstdp"          main design (adapted weights are discarded)
     python3 train_rstdp.py 401 --lamarckian       -> "rstdp_lamarck"  ablation: adapted weights go back into the genome
     python3 train_rstdp.py 501 --no-plasticity    -> "snn_potential"  control: new action choice, no learning
+
+    python3 train_rstdp.py 301 --resume logs/seed_301_<date>   -> continues an interrupted run from its last checkpoint,
+                                                                  in the same folder (same flags as the original run)
 '''
 
 MAX_GENERATIONS = 1500
@@ -39,6 +42,7 @@ NOOP = 0                  # COMPLEX_MOVEMENT[0] = ['NOOP']
 LAMARCKIAN = "--lamarckian" in sys.argv
 PLASTIC = "--no-plasticity" not in sys.argv
 KIND = "snn_potential" if not PLASTIC else ("rstdp_lamarck" if LAMARCKIAN else "rstdp")
+RESUME_DIR = sys.argv[sys.argv.index("--resume") + 1] if "--resume" in sys.argv else None
 
 # this is only so mac does not crash
 env = gym_super_mario_bros.make('SuperMarioBros-1-1-v0')
@@ -114,40 +118,81 @@ def eval_genomes(genomes, config):
           f" | Population learning rate: mean {np.mean(rates):.4f}, zero in {sum(r == 0 for r in rates)}/{len(rates)}")
 
 
+class EnergySaver(neat.reporting.BaseReporter):
+    ''' writes CodeCarbon's numbers to emissions.csv after every generation, so a crash only loses one generation '''
+    def __init__(self, tracker):
+        self.tracker = tracker
+
+    def end_generation(self, config, population, species_set):
+        self.tracker.flush()
+
+    def __getstate__(self):
+        # the checkpoints pickle the reporters (inside the species set) and the tracker cannot be pickled.
+        # on resume neat replaces them with the new ones anyway
+        return {"tracker": None}
+
+
 def read_codecarbon(log_dir):
-    """Last row of the emissions.csv that CodeCarbon writes into log_dir -> (kWh, kg CO2eq)."""
+    """emissions.csv in log_dir gets a row with the running totals of the CodeCarbon session after every generation.
+    a resumed run has several sessions (run_id) -> last row of each session, summed:
+    (kWh, kg CO2eq, CPU-only kWh, seconds measured)."""
     path = os.path.join(log_dir, "emissions.csv")
     if not os.path.exists(path):
-        return None, None
+        return None, None, None, None
     with open(path, newline="") as f:
-        rows = list(csv.DictReader(f))
-    if not rows:
-        return None, None
-    return float(rows[-1]["energy_consumed"]), float(rows[-1]["emissions"])
+        sessions = {r["run_id"]: r for r in csv.DictReader(f)}     # later rows overwrite earlier ones
+    if not sessions:
+        return None, None, None, None
+    rows = sessions.values()
+    return tuple(sum(float(r[k]) for r in rows) for k in ("energy_consumed", "emissions", "cpu_energy", "duration"))
+
+
+def last_checkpoint(log_dir):
+    ''' path of the newest neat-checkpoint-N in log_dir, or None '''
+    names = [n for n in os.listdir(log_dir) if n.startswith("neat-checkpoint-")]
+    if not names:
+        return None
+    return os.path.join(log_dir, max(names, key=lambda n: int(n.rsplit("-", 1)[1])))
 
 
 def run(config_path, seed_value):
     config = neat.config.Config(RSTDPGenome, neat.DefaultReproduction,
                                 neat.DefaultSpeciesSet, neat.DefaultStagnation, config_path)
-    population = neat.Population(config)
 
-    timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    log_dir = os.path.join(local_dir, "logs", f"seed_{seed_value}_{timestamp}")
-    os.makedirs(log_dir, exist_ok=True)
+    if RESUME_DIR:
+        # continue an interrupted run in its own folder. the checkpoint also restores python's random state
+        log_dir = os.path.abspath(RESUME_DIR)
+        checkpoint = last_checkpoint(log_dir)
+        if checkpoint:
+            population = neat.Checkpointer.restore_checkpoint(checkpoint)
+            config = population.config
+            print(f"--- RESUMING FROM {checkpoint} (generation {population.generation}) ---")
+        else:
+            population = neat.Population(config)      # stopped before its first checkpoint: start again
+    else:
+        population = neat.Population(config)
+        timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        log_dir = os.path.join(local_dir, "logs", f"seed_{seed_value}_{timestamp}")
+        os.makedirs(log_dir, exist_ok=True)
+    start_generation = population.generation
 
     population.add_reporter(neat.StdOutReporter(True))
     population.add_reporter(neat.StatisticsReporter())
-    population.add_reporter(neat.Checkpointer(10, filename_prefix=os.path.join(log_dir, "neat-checkpoint-")))
+    checkpointer = neat.Checkpointer(10, filename_prefix=os.path.join(log_dir, "neat-checkpoint-"))
+    checkpointer.last_generation_checkpoint = start_generation      # next checkpoint 10 generations after the resume
+    population.add_reporter(checkpointer)
 
     # CodeCarbon footprint of the TRAINING run: measured via RAPL if readable, otherwise estimated from CPU load.
-    # tracking_mode="process" only counts this run in load mode; RAPL always reports the whole CPU package
+    # tracking_mode="process" only counts this run in load mode; RAPL always reports the whole CPU package.
+    # EnergySaver adds a row to emissions.csv after every generation (see read_codecarbon)
     tracker = OfflineEmissionsTracker(country_iso_code="ESP", project_name=f"{KIND}_seed_{seed_value}",
                                       output_dir=log_dir, measure_power_secs=5, log_level="warning",
                                       tracking_mode="process")
+    population.add_reporter(EnergySaver(tracker))
     t0, cpu0 = time.time(), time.process_time()
     tracker.start()
     try:
-        winner = population.run(eval_genomes, MAX_GENERATIONS)
+        winner = population.run(eval_genomes, MAX_GENERATIONS - start_generation)
     finally:
         tracker.stop()
     train_seconds = time.time() - t0
@@ -156,11 +201,14 @@ def run(config_path, seed_value):
     with open(os.path.join(log_dir, "winner.pkl"), "wb") as f:
         pickle.dump(winner, f)
 
-    kwh, kg = read_codecarbon(log_dir)
+    # if the run was resumed, the time and energy before the last crash are only known if CodeCarbon saved them
+    # (emissions.csv); train_seconds and cpu_seconds are of this session only
+    kwh, kg, cpu_kwh, measured_seconds = read_codecarbon(log_dir)
     summary = {"kind": KIND, "seed": seed_value, "generations": population.generation,
                "solved": bool(winner.fitness >= config.fitness_threshold),
                "train_seconds": train_seconds, "cpu_seconds": cpu_seconds,
-               "training_kwh": kwh, "training_kg_co2eq": kg,
+               "training_kwh": kwh, "training_kg_co2eq": kg, "training_cpu_kwh": cpu_kwh,
+               "measured_seconds": measured_seconds, "resumed_from_generation": start_generation,
                "plastic": PLASTIC, "lamarckian": LAMARCKIAN, "episodes": EPISODES, "max_noop_start": MAX_NOOP_START,
                "winner_learning_rate": winner.learning_rate}
     with open(os.path.join(log_dir, "run_summary.json"), "w") as f:
