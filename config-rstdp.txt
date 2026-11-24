@@ -1,6 +1,6 @@
 [NEAT]
 fitness_criterion      = max
-fitness_threshold      = 50000
+fitness_threshold      = 100000
 pop_size               = 300
 reset_on_extinction    = False
 no_fitness_termination = False
@@ -66,13 +66,15 @@ single_structural_mutation = false
 structural_mutation_surer  = default
 
 # R-STDP learning rate (one gene per genome, evolved like a weight; 0 = no learning while playing)
-learning_rate_init_mean     = 0.01
-learning_rate_init_stdev    = 0.01
+# batch 2 (seeds 6xx/7xx): wider range than the pilot (init 0.01 +- 0.01, max 0.1, mutate power 0.005), so evolution
+# can also try learning strong enough to change the behaviour within one game
+learning_rate_init_mean     = 0.1
+learning_rate_init_stdev    = 0.1
 learning_rate_init_type     = gaussian
 learning_rate_min_value     = 0.0
-learning_rate_max_value     = 0.1
+learning_rate_max_value     = 1.0
 learning_rate_mutate_rate   = 0.2
-learning_rate_mutate_power  = 0.005
+learning_rate_mutate_power  = 0.05
 learning_rate_replace_rate  = 0.02
 
 [DefaultSpeciesSet]

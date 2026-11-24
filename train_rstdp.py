@@ -81,8 +81,10 @@ def play_episode(genome, config, genome_id):
 
         if info['flag_get']:
             done = True
-            fitness += 100000  # beats the 50k threshold (as the average of EPISODES games: if reached in any of them)
-            print(f"\n>>> FLAG REACHED by Genome {genome_id}! Ending training after this generation. <<<\n")
+            # +100000 per game won. fitness is the average of the EPISODES games, so it only reaches the threshold
+            # (100000 in config-rstdp.txt) if the genome wins ALL of them, not just a lucky one (the pilot used 50000)
+            fitness += 100000
+            print(f"\n>>> FLAG REACHED by Genome {genome_id} <<<\n")
 
         # anti-stuck conditions
         if info['x_pos'] > current_max_x:
@@ -107,7 +109,10 @@ def eval_genomes(genomes, config):
 
         if LAMARCKIAN:
             # ablation: the weights learned in the last game are written back into the genome, so the children
-            # inherit what this genome learned while playing
+            # inherit what this genome learned while playing.
+            # the fitness above was earned with the weights BEFORE learning: keep them, so the saved winner is the
+            # network that earned its fitness (see run). the pilot (seeds 4xx) saved the learned ones instead
+            genome.played_weights = {key: conn.weight for key, conn in genome.connections.items()}
             last_net = results[-1][2]
             for in_node, out_node, weight in last_net.connections:
                 genome.connections[(in_node, out_node)].weight = weight
@@ -198,6 +203,12 @@ def run(config_path, seed_value):
     train_seconds = time.time() - t0
     cpu_seconds = time.process_time() - cpu0      # to split a shared RAPL reading between parallel runs
 
+    if LAMARCKIAN and hasattr(winner, "played_weights"):
+        # save the weights the winner PLAYED with (the ones that earned its fitness), not the learned ones that were
+        # written back for its children
+        for key, weight in winner.played_weights.items():
+            winner.connections[key].weight = weight
+
     with open(os.path.join(log_dir, "winner.pkl"), "wb") as f:
         pickle.dump(winner, f)
 
@@ -206,6 +217,7 @@ def run(config_path, seed_value):
     kwh, kg, cpu_kwh, measured_seconds = read_codecarbon(log_dir)
     summary = {"kind": KIND, "seed": seed_value, "generations": population.generation,
                "solved": bool(winner.fitness >= config.fitness_threshold),
+               "fitness_threshold": config.fitness_threshold,
                "train_seconds": train_seconds, "cpu_seconds": cpu_seconds,
                "training_kwh": kwh, "training_kg_co2eq": kg, "training_cpu_kwh": cpu_kwh,
                "measured_seconds": measured_seconds, "resumed_from_generation": start_generation,

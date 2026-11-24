@@ -1,6 +1,6 @@
 import csv, glob, json, os, sys
 import numpy as np
-from scipy.stats import mannwhitneyu
+from scipy.stats import mannwhitneyu, wilcoxon
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 # python3 stats.py -> level 1-1 (results/);  python3 stats.py 1-2 -> transfer results (results/level_1-2/)
@@ -9,27 +9,39 @@ RES = os.path.join(HERE, "results") if LEVEL == "1-1" else os.path.join(HERE, "r
 GROUPS = {"snn": "Spiking NEAT (SNN)",
           "ann": "Standard NEAT (ANN)",
           "snn_potential": "SNN, potential-based action, no learning (control)",
+          "rstdp_pilot": "SNN + R-STDP, pilot (weak learning-rate range)",
+          "rstdp_lamarck_pilot": "SNN + R-STDP, Lamarckian, pilot (saved the learned weights)",
           "rstdp": "SNN + R-STDP",
           "rstdp_lamarck": "SNN + R-STDP, Lamarckian (ablation)"}
-SHORT = {"snn": "SNN", "ann": "ANN", "snn_potential": "Control", "rstdp": "R-STDP", "rstdp_lamarck": "Lamarckian"}
-SPIKING = {"snn", "snn_potential", "rstdp", "rstdp_lamarck"}
-PLASTIC = {"rstdp", "rstdp_lamarck"}
+SHORT = {"snn": "SNN", "ann": "ANN", "snn_potential": "Control", "rstdp_pilot": "R-STDP pilot",
+         "rstdp_lamarck_pilot": "Lamarck pilot", "rstdp": "R-STDP", "rstdp_lamarck": "Lamarckian"}
+# groups that share the eval.py kind (file name) and are told apart by seed: pilot on alice (Oct 2026) vs batch 2
+SEEDS = {"rstdp_pilot": ("rstdp", range(301, 306)), "rstdp_lamarck_pilot": ("rstdp_lamarck", range(401, 406)),
+         "rstdp": ("rstdp", range(601, 611)), "rstdp_lamarck": ("rstdp_lamarck", range(701, 706))}
+SPIKING = {"snn", "snn_potential", "rstdp_pilot", "rstdp_lamarck_pilot", "rstdp", "rstdp_lamarck"}
+PLASTIC = {"rstdp_pilot", "rstdp_lamarck_pilot", "rstdp", "rstdp_lamarck"}
 BASELINE = "ann"
 # pairs compared with Mann-Whitney (only when both groups have results), and the question each one answers
 PAIRS = [("snn", "ann", "spiking vs conventional"),
          ("rstdp", "ann", "R-STDP vs conventional"),
          ("rstdp", "snn_potential", "effect of learning (same action choice, with vs without R-STDP)"),
          ("snn_potential", "snn", "effect of the action choice (potential vs argmax of spikes)"),
-         ("rstdp_lamarck", "rstdp", "Lamarckian vs Baldwinian")]
+         ("rstdp_lamarck", "rstdp", "Lamarckian vs Baldwinian"),
+         ("rstdp", "rstdp_pilot", "stronger learning-rate range vs pilot"),
+         ("rstdp_pilot", "ann", "R-STDP pilot vs conventional"),
+         ("rstdp_pilot", "snn_potential", "R-STDP pilot vs control")]
 ENERGY_VARIANT = "default"
 ALPHA = 0.05
 
 
-def load(kind):
+def load(group):
+    kind, seeds = SEEDS.get(group, (group, None))
     runs = []
     for p in sorted(glob.glob(os.path.join(RES, f"{kind}_seed_*.json"))):
         with open(p) as f:
-            runs.append(json.load(f))
+            r = json.load(f)
+        if seeds is None or r["seed"] in seeds:
+            runs.append(r)
     return runs
 
 
@@ -69,6 +81,8 @@ def compare(name, x, y, alternative="two-sided"):
 METRICS = {   # name: (getter, unit)
     "completed (0/1)":           (lambda r: float(r["completed"]), ""),
     "distance max_x":            (lambda r: r["max_x"], "px"),
+    "completion, 31 starts":     (lambda r: r["starts_completion_rate"], ""),     # robustness (eval.py STARTS)
+    "distance, 31 starts":       (lambda r: r["starts_mean_max_x"], "px"),
     "frames":                    (lambda r: r["frames"], ""),
     "energy / frame":            (lambda r: r["energy_per_frame_pj"][ENERGY_VARIANT], "pJ"),
     "energy / episode":          (lambda r: r["energy"][ENERGY_VARIANT]["total_pj"], "pJ"),
@@ -81,7 +95,12 @@ RSTDP_METRICS = {   # only for the groups that learn while playing
     "trace ops / frame":         (lambda r: r["trace_updates"] / r["frames"], ""),
     "synapses changed (game)":   (lambda r: r["weights_changed"], ""),
     "mean |weight change|":      (lambda r: r["mean_abs_weight_change"], ""),
+    "completion, learning off":  (lambda r: r["starts_no_learning_completion_rate"], ""),   # learning ablation
+    "distance, learning off":    (lambda r: r["starts_no_learning_mean_max_x"], "px"),
 }
+# learning ablation: the same winner with vs without R-STDP (paired, Wilcoxon signed-rank)
+ABLATION = [("completion, 31 starts", "completion, learning off"),
+            ("distance, 31 starts", "distance, learning off")]
 
 
 def main():
@@ -135,11 +154,30 @@ def main():
             continue
         print(f"\n{'=' * 70}\n MANN-WHITNEY U + Cliff's delta: {SHORT[x_kind]} vs {SHORT[y_kind]}   (n={len(x_runs)} vs {len(y_runs)}: low power)"
               f"\n {question}\n{'=' * 70}")
-        for name in ("distance max_x", "frames", "energy / frame", "energy / episode"):
+        for name in ("distance max_x", "completion, 31 starts", "distance, 31 starts", "frames", "energy / frame",
+                     "energy / episode"):
             c = compare(name, col(x_runs, METRICS[name][0]), col(y_runs, METRICS[name][0]))
             if c:
-                print(f" {name:<20} p = {c['p']:.4f}  delta = {c['delta']:+.2f}  {'significant' if c['sig'] else 'not significant'}")
+                print(f" {name:<22} p = {c['p']:.4f}  delta = {c['delta']:+.2f}  {'significant' if c['sig'] else 'not significant'}")
         print(f" (delta < 0: {SHORT[x_kind]} lower than {SHORT[y_kind]}.  With 5 vs 5 runs the smallest possible two-sided p is ~0.008.)")
+
+    for k in present:
+        if k not in PLASTIC:
+            continue
+        runs = [r for r in data[k] if "starts_no_learning" in r]
+        if len(runs) < 2:
+            continue
+        print(f"\n{'=' * 70}\n LEARNING ABLATION: {SHORT[k]}, same winner with vs without R-STDP   (n={len(runs)}, paired)"
+              f"\n{'=' * 70}")
+        for on_name, off_name in ABLATION:
+            on = col(runs, METRICS[on_name][0])
+            off = col(runs, RSTDP_METRICS[off_name][0])
+            diff = on - off
+            p = wilcoxon(on, off).pvalue if np.any(diff != 0) else 1.0
+            print(f" {on_name:<22} on {np.mean(on):8.4g} | off {np.mean(off):8.4g} | better with learning in "
+                  f"{int(np.sum(diff > 0))}/{len(runs)} runs, worse in {int(np.sum(diff < 0))}  "
+                  f"p = {p:.4f}  {'significant' if p < ALPHA else 'not significant'}")
+        print(f" (Wilcoxon signed-rank, two-sided. with n=5 the smallest possible p is 0.0625, so n=10 is needed)")
 
     sens = sorted({v for k in present for r in data[k] for v in r["energy"]})
     print(f"\n{'=' * 70}\n ENERGY / FRAME SENSITIVITY TO THE MODEL ASSUMPTIONS (mean pJ/frame, ratio to ANN)\n{'=' * 70}")

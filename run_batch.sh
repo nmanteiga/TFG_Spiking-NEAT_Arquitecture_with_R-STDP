@@ -1,9 +1,11 @@
 #!/bin/bash
 
 # R-STDP groups (the SNN/ANN batch is in run_batch.sh on main). leave a list empty ("") to skip that group
-RSTDP_SEEDS="301 302 303 304 305"      # main design:  train_rstdp.py <seed>
-LAMARCK_SEEDS="401 402 403 404 405"    # ablation:     train_rstdp.py <seed> --lamarckian
-CONTROL_SEEDS="501 502 503 504 505"    # control:      train_rstdp.py <seed> --no-plasticity
+# pilot (alice, Oct 2026): rstdp 301-305, lamarck 401-405, control 501-505
+# batch 2: stronger learning-rate range, Lamarckian fix, win both games to solve. the pilot controls are reused
+RSTDP_SEEDS="601 602 603 604 605 606 607 608 609 610"   # main design:  train_rstdp.py <seed>
+LAMARCK_SEEDS="701 702 703 704 705"                     # ablation:     train_rstdp.py <seed> --lamarckian
+CONTROL_SEEDS=""                                        # control:      train_rstdp.py <seed> --no-plasticity
 
 cd "$(dirname "$0")" || exit 1
 mkdir -p logs

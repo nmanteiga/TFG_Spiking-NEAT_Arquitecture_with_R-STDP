@@ -9,7 +9,15 @@ kinds: ann, snn (train_baseline.py / train_spiking.py)
        rstdp, rstdp_lamarck, snn_potential (train_rstdp.py: plain, --lamarckian, --no-plasticity)
 
 the evaluation is one deterministic game (no random do-nothing start), the same for every group. R-STDP groups keep
-learning during it, starting from the winner's genome weights, exactly as they did in training.
+learning during it, starting from the winner's genome weights, exactly as they did in training. the energy numbers
+come from this game.
+
+robustness: the winner also plays STARTS more games, one after each number of do-nothing frames 0..30 (the range
+train_rstdp.py trains with), each with a new network from the genome. the emulator is deterministic, so an agent that
+only memorised one sequence of moves will fail when the start changes.
+
+learning ablation (rstdp, rstdp_lamarck): the same winner also plays the STARTS games with R-STDP switched off, to see
+whether its learning actually helps (paired: same genome, with vs without learning).
 """
 import json, os, pickle, sys
 import neat
@@ -28,11 +36,16 @@ SPIKING = {"snn", "rstdp", "rstdp_lamarck", "snn_potential"}
 RSTDP_GENOME = {"rstdp", "rstdp_lamarck", "snn_potential"}     # trained with models/rstdp_genome.py
 PLASTIC = {"rstdp", "rstdp_lamarck"}                           # learn while playing
 BY_POTENTIAL = {"rstdp", "rstdp_lamarck", "snn_potential"}     # button = most charged output (not argmax of spikes)
+STARTS = range(31)      # do-nothing frames before each robustness game (same as MAX_NOOP_START = 30 in train_rstdp.py)
+NOOP = 0                # COMPLEX_MOVEMENT[0] = ['NOOP']
 
 
-def run_episode(net, level, by_potential=False, learn=False, max_stuck=250):
+def run_episode(net, level, by_potential=False, learn=False, max_stuck=250, noops=0):
     env = JoypadSpace(gym_super_mario_bros.make(f"SuperMarioBros-{level}-v0"), COMPLEX_MOVEMENT)
     state, info = env.reset()
+    # do-nothing start (the network is not running yet, mario just stands still), as in train_rstdp.py
+    for _ in range(noops):
+        state, reward, terminated, truncated, info = env.step(NOOP)
     frames, max_x, stuck, done, completed = 0, 0, 0, False, False
     while not done:
         output = net.activate(preprocess_state(state))
@@ -68,19 +81,44 @@ def main(kind, seed, log_dir, level="1-1"):
     enabled = [k for k, c in genome.connections.items() if c.enabled]
     n_conn, n_conn_in = len(enabled), sum(1 for (i, _) in enabled if i < 0)
 
-    if kind in SPIKING:
-        from models.spiking_network import SpikingNetwork
-        if kind in RSTDP_GENOME:
-            net = SpikingNetwork(genome, config, plastic=kind in PLASTIC, learning_rate=genome.learning_rate)
-        else:
-            net = SpikingNetwork(genome, config)
-    else:
-        net = neat.nn.RecurrentNetwork.create(genome, config)
+    def new_net():
+        ''' a fresh network from the genome (R-STDP: weights back to the genome's values) '''
+        if kind in SPIKING:
+            from models.spiking_network import SpikingNetwork
+            if kind in RSTDP_GENOME:
+                return SpikingNetwork(genome, config, plastic=kind in PLASTIC, learning_rate=genome.learning_rate)
+            return SpikingNetwork(genome, config)
+        return neat.nn.RecurrentNetwork.create(genome, config)
 
-    completed, max_x, frames = run_episode(net, level, by_potential=kind in BY_POTENTIAL, learn=kind in PLASTIC)
+    def new_net_frozen():
+        ''' the same network with R-STDP switched off (for the learning ablation) '''
+        from models.spiking_network import SpikingNetwork
+        return SpikingNetwork(genome, config, plastic=False, learning_rate=0.0)
+
+    play = lambda n, noops: run_episode(n, level, by_potential=kind in BY_POTENTIAL, learn=kind in PLASTIC, noops=noops)
+
+    net = new_net()
+    completed, max_x, frames = play(net, 0)
 
     res = {"kind": kind, "seed": seed, "level": level, "completed": completed, "max_x": max_x, "frames": frames,
            "n_nodes": n_nodes, "n_connections": n_conn, "fitness_in_training": genome.fitness}
+
+    # robustness: one game per start (start 0 is the game above, so it is not played again)
+    games = [(completed, max_x, frames)] + [play(new_net(), n) for n in STARTS if n > 0]
+    res["starts"] = {"noops": list(STARTS), "completed": [g[0] for g in games], "max_x": [g[1] for g in games],
+                     "frames": [g[2] for g in games]}
+    res["starts_completion_rate"] = float(np.mean(res["starts"]["completed"]))
+    res["starts_mean_max_x"] = float(np.mean(res["starts"]["max_x"]))
+
+    if kind in PLASTIC:
+        # learning ablation: the SAME genome plays the same starts with R-STDP switched off (same action choice).
+        # if learning helps, the agent does worse without it
+        frozen = lambda noops: run_episode(new_net_frozen(), level, by_potential=True, learn=False, noops=noops)
+        games_off = [frozen(n) for n in STARTS]
+        res["starts_no_learning"] = {"completed": [g[0] for g in games_off], "max_x": [g[1] for g in games_off],
+                                     "frames": [g[2] for g in games_off]}
+        res["starts_no_learning_completion_rate"] = float(np.mean(res["starts_no_learning"]["completed"]))
+        res["starts_no_learning_mean_max_x"] = float(np.mean(res["starts_no_learning"]["max_x"]))
 
     variants = {"default": em.DEFAULT,
                 "act5": em.Assumptions(act_cost_in_macs=5),
@@ -121,7 +159,11 @@ def main(kind, seed, log_dir, level="1-1"):
     with open(out, "w") as f:
         json.dump(res, f, indent=2)
     print(f"{kind} seed {seed}: completed={completed} max_x={max_x} frames={frames} "
-          f"E={res['energy']['default']['total_pj']:.0f} pJ ({res['energy_per_frame_pj']['default']:.1f} pJ/frame) -> {out}")
+          f"E={res['energy']['default']['total_pj']:.0f} pJ ({res['energy_per_frame_pj']['default']:.1f} pJ/frame) | "
+          f"{len(games)} starts: completed {sum(res['starts']['completed'])}, mean max_x {res['starts_mean_max_x']:.0f}"
+          + (f" | learning off: completed {sum(res['starts_no_learning']['completed'])}, mean max_x "
+             f"{res['starts_no_learning_mean_max_x']:.0f}" if kind in PLASTIC else "")
+          + f" -> {out}")
 
 
 if __name__ == "__main__":
